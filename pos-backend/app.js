@@ -11,10 +11,33 @@ const PORT = config.port;
 connectDB();
 
 // Middlewares
+const allowedOrigins = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "https://morsel-alpha.vercel.app"
+];
+if (config.frontendUrl) {
+    allowedOrigins.push(config.frontendUrl);
+}
+
 app.use(cors({
     credentials: true,
-    origin: ['http://localhost:5173', config.frontendUrl]
-}))
+    origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps, curl, postman)
+        if (!origin) return callback(null, true);
+        
+        const isAllowed = allowedOrigins.includes(origin) || 
+                          origin.endsWith('.vercel.app') || 
+                          /^http:\/\/localhost:\d+$/.test(origin) ||
+                          /^http:\/\/127\.0\.0\.1:\d+$/.test(origin);
+                          
+        if (isAllowed) {
+            callback(null, true);
+        } else {
+            callback(null, false);
+        }
+    }
+}));
 app.use(express.json()); // parse incoming request in json format
 app.use(cookieParser())
 
