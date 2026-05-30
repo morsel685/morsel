@@ -35,7 +35,7 @@ const Auth = () => {
       <div className="w-full lg:w-1/2 h-full bg-[#1a1a1a] p-6 sm:p-10 flex flex-col justify-center overflow-y-auto">
         <div className="max-w-xl w-full mx-auto">
           <div className="flex justify-center">
-            <img src={logo} alt="Morsel Logo" className="h-16" />
+            <img src={logo} alt="Morsel Logo" className="h-12" />
           </div>
 
           <h2 className="text-2xl sm:text-3xl text-center mt-6 font-semibold text-yellow-400 mb-6">
