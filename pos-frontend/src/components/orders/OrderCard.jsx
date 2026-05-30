@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import { FaCheckDouble, FaLongArrowAltRight } from "react-icons/fa";
 import { FaCircle } from "react-icons/fa";
 import { formatDateAndTime, getAvatarName } from "../../utils/index";
-import { updateOrderStatus, updateTable } from "../../https/index";
+import { updateOrderStatus, updateTable, updateOrder } from "../../https/index";
 import { enqueueSnackbar } from "notistack";
-import axios from "axios";
 
 const OrderCard = ({ order, onUpdate }) => {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -23,11 +22,7 @@ const OrderCard = ({ order, onUpdate }) => {
 
       // If completing with payment selection, update payment method first
       if (newStatus === "Completed" && selectedPayment) {
-        await axios.put(
-          `http://localhost:3000/api/order/${order._id}`,
-          { orderStatus: newStatus, paymentMethod: selectedPayment },
-          { withCredentials: true }
-        );
+        await updateOrder(order._id, { orderStatus: newStatus, paymentMethod: selectedPayment });
 
         // Auto-print receipt after successful payment
         printReceipt(selectedPayment);

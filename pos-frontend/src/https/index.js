@@ -28,6 +28,8 @@ export const getPaymentHistory = () => axiosWrapper.get("/api/payment/history");
 // Order Endpoints
 export const addOrder = (data) => axiosWrapper.post("/api/order/", data);
 export const getOrders = () => axiosWrapper.get("/api/order");
+export const updateOrder = (orderId, data) =>
+  axiosWrapper.put(`/api/order/${orderId}`, data);
 export const updateOrderStatus = ({ orderId, orderStatus }) =>
   axiosWrapper.put(`/api/order/${orderId}`, { orderStatus });
 export const getDailyReport = () => axiosWrapper.get("/api/order/report/daily");

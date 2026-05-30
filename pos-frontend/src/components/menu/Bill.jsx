@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getTotalPrice } from "../../redux/slices/cartSlice";
-import { addOrder, updateTable } from "../../https/index";
+import { addOrder, updateTable, updateOrder } from "../../https/index";
 import { enqueueSnackbar } from "notistack";
 import { useMutation } from "@tanstack/react-query";
 import { removeAllItems } from "../../redux/slices/cartSlice";
 import { removeCustomer, clearEditingOrder } from "../../redux/slices/customerSlice";
 import Invoice from "../invoice/Invoice";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Bill = () => {
@@ -50,8 +49,8 @@ const Bill = () => {
       // Update existing order
       try {
         setIsUpdating(true);
-        await axios.put(
-          `http://localhost:3000/api/order/${customerData.editingOrderId}`,
+        await updateOrder(
+          customerData.editingOrderId,
           {
             items: cartData,
             orderType: customerData.orderType,
@@ -65,8 +64,7 @@ const Bill = () => {
               phone: customerData.customerPhone || "",
               guests: customerData.guests || 1,
             },
-          },
-          { withCredentials: true }
+          }
         );
 
         enqueueSnackbar("Order Updated!", { variant: "success" });
