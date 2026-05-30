@@ -24,7 +24,10 @@ const Header = () => {
       navigate("/auth");
     },
     onError: (error) => {
-      console.log(error);
+      console.log("Logout error:", error);
+      // Fallback: Clear user state and redirect anyway so user is not stuck
+      dispatch(removeUser());
+      navigate("/auth");
     },
   });
 
