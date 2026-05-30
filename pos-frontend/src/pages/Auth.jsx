@@ -13,9 +13,9 @@ const Auth = () => {
   const [isRegister, setIsRegister] = useState(false);
 
   return (
-    <div className="flex min-h-screen w-full">
+    <div className="flex h-screen w-full overflow-hidden">
       {/* Left Section */}
-      <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center bg-cover">
+      <div className="hidden lg:flex lg:w-1/2 h-full relative items-center justify-center bg-cover">
         {/* BG Image */}
         <img className="w-full h-full object-cover" src={restaurant} alt="Restaurant Image" />
 
@@ -32,20 +32,20 @@ const Auth = () => {
       </div>
 
       {/* Right Section */}
-      <div className="w-full lg:w-1/2 min-h-screen bg-[#1a1a1a] p-6 sm:p-10 flex flex-col justify-center">
-        <div className="max-w-md w-full mx-auto">
+      <div className="w-full lg:w-1/2 h-full bg-[#1a1a1a] p-6 sm:p-10 flex flex-col justify-center overflow-y-auto">
+        <div className="max-w-xl w-full mx-auto">
           <div className="flex justify-center">
-            <img src={logo} alt="Morsel Logo" className="h-20" />
+            <img src={logo} alt="Morsel Logo" className="h-16" />
           </div>
 
-          <h2 className="text-3xl sm:text-4xl text-center mt-8 font-semibold text-yellow-400 mb-8 sm:mb-10">
+          <h2 className="text-2xl sm:text-3xl text-center mt-6 font-semibold text-yellow-400 mb-6">
             {isRegister ? "Employee Registration" : "Employee Login"}
           </h2>
 
           {/* Components */}
           {isRegister ? <Register setIsRegister={setIsRegister} /> : <Login />}
 
-          <div className="flex justify-center mt-6">
+          <div className="flex justify-center mt-4">
             <p className="text-sm text-[#ababab]">
               {isRegister ? "Already have an account? " : "Don't have an account? "}
               <a onClick={() => setIsRegister(!isRegister)} className="text-yellow-400 font-semibold hover:underline" href="#">
