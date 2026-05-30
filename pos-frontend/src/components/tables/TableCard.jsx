@@ -4,10 +4,9 @@ import { getAvatarName, getBgColor } from "../../utils"
 import { useDispatch } from "react-redux";
 import { updateTable as updateTableRedux, setEditingOrder } from "../../redux/slices/customerSlice";
 import { setCart } from "../../redux/slices/cartSlice";
-import { updateTable, updateOrderStatus } from "../../https/index";
+import { updateTable, updateOrder } from "../../https/index";
 import { FaLongArrowAltRight, FaEdit, FaTrash } from "react-icons/fa";
 import { enqueueSnackbar } from "notistack";
-import axios from "axios";
 
 const TableCard = ({ id, name, status, initials, seats, currentOrder, onUpdate, onEdit, onDelete }) => {
   const dispatch = useDispatch();
@@ -71,11 +70,7 @@ const TableCard = ({ id, name, status, initials, seats, currentOrder, onUpdate, 
       setIsUpdating(true);
 
       // Update order status to Cancelled
-      await axios.put(
-        `http://localhost:3000/api/order/${currentOrder._id}`,
-        { orderStatus: "Cancelled" },
-        { withCredentials: true }
-      );
+      await updateOrder(currentOrder._id, { orderStatus: "Cancelled" });
 
       // Free the table
       await updateTable({
@@ -109,11 +104,7 @@ const TableCard = ({ id, name, status, initials, seats, currentOrder, onUpdate, 
     try {
       setIsUpdating(true);
 
-      await axios.put(
-        `http://localhost:3000/api/order/${currentOrder._id}`,
-        { orderStatus: "Completed", paymentMethod: selectedPayment },
-        { withCredentials: true }
-      );
+      await updateOrder(currentOrder._id, { orderStatus: "Completed", paymentMethod: selectedPayment });
 
       await updateTable({
         tableId: id,
