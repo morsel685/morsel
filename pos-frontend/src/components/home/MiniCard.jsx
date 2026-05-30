@@ -11,7 +11,7 @@ const MiniCard = ({ title, icon, number, footerNum }) => {
   const trendColor = isEarnings ? "text-green-500" : "text-yellow-500";
 
   return (
-    <div className={`bg-gradient-to-br ${gradientFrom} ${gradientTo} border ${borderColor} py-6 px-6 rounded-2xl w-[50%] hover:shadow-xl transition-all duration-300`}>
+    <div className={`bg-gradient-to-br ${gradientFrom} ${gradientTo} border ${borderColor} py-6 px-6 rounded-2xl w-full hover:shadow-xl transition-all duration-300`}>
       <div className='flex items-start justify-between mb-4'>
         <h1 className='text-gray-300 text-sm font-semibold tracking-wide'>{title}</h1>
         <div className={`${iconBg} p-3 rounded-xl ${iconColor} text-2xl`}>

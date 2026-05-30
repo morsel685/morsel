@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaHome } from "react-icons/fa";
 import { MdOutlineReorder, MdTableBar } from "react-icons/md";
-import { CiCircleMore } from "react-icons/ci";
+import { HiDocumentReport } from "react-icons/hi";
 import { BiSolidDish } from "react-icons/bi";
 import { useNavigate, useLocation } from "react-router-dom";
 import Modal from "./Modal";
@@ -14,8 +14,8 @@ const BottomNav = () => {
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [guestCount, setGuestCount] = useState(0);
-  const [name, setName] = useState();
-  const [phone, setPhone] = useState();
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -32,48 +32,60 @@ const BottomNav = () => {
   const isActive = (path) => location.pathname === path;
 
   const handleCreateOrder = () => {
-    // send the data to store
     dispatch(setCustomer({ name, phone, guests: guestCount }));
     navigate("/tables");
   }
 
+  const isCenterButtonDisabled = isActive("/tables") || isActive("/menu");
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-[#262626] p-2 h-16 flex justify-around">
+    <div className="fixed bottom-0 left-0 right-0 bg-[#1a1a1a]/95 backdrop-blur-md border-t border-[#262626] px-2 py-1 h-16 flex justify-around items-center z-50">
       <button
         onClick={() => navigate("/")}
-        className={`flex items-center justify-center font-bold ${isActive("/") ? "text-[#f5f5f5] bg-[#343434]" : "text-[#ababab]"
-          } w-[300px] rounded-[20px]`}
+        className={`flex flex-col items-center justify-center font-bold transition-colors duration-200 ${isActive("/") ? "text-yellow-400" : "text-[#ababab] hover:text-white"
+          } flex-1 max-w-[80px] py-1`}
       >
-        <FaHome className="inline mr-2" size={20} /> <p>Home</p>
+        <FaHome size={20} />
+        <span className="text-[10px] mt-1 font-medium">Home</span>
       </button>
       <button
         onClick={() => navigate("/orders")}
-        className={`flex items-center justify-center font-bold ${isActive("/orders") ? "text-[#f5f5f5] bg-[#343434]" : "text-[#ababab]"
-          } w-[300px] rounded-[20px]`}
+        className={`flex flex-col items-center justify-center font-bold transition-colors duration-200 ${isActive("/orders") ? "text-yellow-400" : "text-[#ababab] hover:text-white"
+          } flex-1 max-w-[80px] py-1`}
       >
-        <MdOutlineReorder className="inline mr-2" size={20} /> <p>Orders</p>
+        <MdOutlineReorder size={20} />
+        <span className="text-[10px] mt-1 font-medium">Orders</span>
       </button>
+
+      {/* Spacer for Floating Button */}
+      <div className="flex-1 max-w-[80px] h-1"></div>
+
       <button
         onClick={() => navigate("/tables")}
-        className={`flex items-center justify-center font-bold ${isActive("/tables") ? "text-[#f5f5f5] bg-[#343434]" : "text-[#ababab]"
-          } w-[300px] rounded-[20px]`}
+        className={`flex flex-col items-center justify-center font-bold transition-colors duration-200 ${isActive("/tables") ? "text-yellow-400" : "text-[#ababab] hover:text-white"
+          } flex-1 max-w-[80px] py-1`}
       >
-        <MdTableBar className="inline mr-2" size={20} /> <p>Tables</p>
+        <MdTableBar size={20} />
+        <span className="text-[10px] mt-1 font-medium">Tables</span>
       </button>
       <button
         onClick={() => navigate("/report")}
-        className={`flex items-center justify-center font-bold ${isActive("/report") ? "text-[#f5f5f5] bg-[#343434]" : "text-[#ababab]"
-          } w-[300px] rounded-[20px]`}
+        className={`flex flex-col items-center justify-center font-bold transition-colors duration-200 ${isActive("/report") ? "text-yellow-400" : "text-[#ababab] hover:text-white"
+          } flex-1 max-w-[80px] py-1`}
       >
-        <p>Report</p>
+        <HiDocumentReport size={20} />
+        <span className="text-[10px] mt-1 font-medium">Report</span>
       </button>
 
+      {/* Floating Action Button - Centered */}
       <button
-        disabled={isActive("/tables") || isActive("/menu")}
+        disabled={isCenterButtonDisabled}
         onClick={openModal}
-        className="absolute bottom-6 bg-[#F6B100] text-[#f5f5f5] rounded-full p-4 items-center"
+        className={`absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#F6B100] text-gray-900 rounded-full p-4 flex items-center justify-center shadow-lg active:scale-95 transition-all duration-150 z-50 border-4 border-[#1a1a1a] ${
+          isCenterButtonDisabled ? "opacity-50 cursor-not-allowed bg-gray-600 text-gray-400" : "hover:bg-yellow-500"
+        }`}
       >
-        <BiSolidDish size={40} />
+        <BiSolidDish size={28} />
       </button>
 
       <Modal isOpen={isModalOpen} onClose={closeModal} title="Create Order">

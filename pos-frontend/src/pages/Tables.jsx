@@ -90,26 +90,24 @@ const Tables = () => {
   }) || [];
 
   return (
-    <section className="bg-[#1f1f1f] h-[calc(100vh-5rem)] overflow-hidden flex flex-col">
-      <div className="flex items-center justify-between px-10 py-4 flex-shrink-0">
+    <section className="bg-[#1f1f1f] h-[calc(100vh-5rem)] overflow-hidden flex flex-col pb-16 sm:pb-0">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between px-4 sm:px-10 py-4 gap-4 flex-shrink-0">
         <div className="flex items-center gap-4">
           <BackButton />
           <h1 className="text-[#f5f5f5] text-2xl font-bold tracking-wider">
             Tables
           </h1>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4 w-full md:w-auto">
           <button
             onClick={() => setStatus("all")}
-            className={`text-[#ababab] text-lg ${status === "all" && "bg-[#383838] rounded-lg px-5 py-2"
-              }  rounded-lg px-5 py-2 font-semibold`}
+            className={`text-[#ababab] text-sm sm:text-lg rounded-lg px-3 sm:px-5 py-1.5 sm:py-2 font-semibold ${status === "all" ? "bg-[#383838] text-white" : ""}`}
           >
             All
           </button>
           <button
             onClick={() => setStatus("booked")}
-            className={`text-[#ababab] text-lg ${status === "booked" && "bg-[#383838] rounded-lg px-5 py-2"
-              }  rounded-lg px-5 py-2 font-semibold`}
+            className={`text-[#ababab] text-sm sm:text-lg rounded-lg px-3 sm:px-5 py-1.5 sm:py-2 font-semibold ${status === "booked" ? "bg-[#383838] text-white" : ""}`}
           >
             Booked
           </button>
@@ -118,7 +116,7 @@ const Tables = () => {
               setTableForm({ tableNo: "", seats: "" });
               setIsAddOpen(true);
             }}
-            className="bg-yellow-500 text-black px-5 py-2 rounded-lg flex items-center gap-2 font-bold hover:bg-yellow-400 transition text-sm"
+            className="bg-yellow-500 text-black px-3 sm:px-5 py-2 rounded-lg flex items-center justify-center gap-2 font-bold hover:bg-yellow-400 transition text-xs sm:text-sm ml-auto sm:ml-0 flex-1 sm:flex-initial"
           >
             <FaPlus /> Add Table
           </button>
@@ -126,7 +124,7 @@ const Tables = () => {
       </div>
 
       <div 
-        className="px-16 py-4 flex-1 min-h-0 overflow-y-auto scrollbar-hide pb-24"
+        className="px-4 sm:px-16 py-4 flex-1 min-h-0 overflow-y-auto scrollbar-hide pb-24"
         style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '20px' }}
       >
         {filteredTables.map((table) => {

@@ -50,36 +50,36 @@ const Orders = () => {
   };
 
   return (
-    <section className="bg-[#1f1f1f] h-[calc(100vh-5rem)] overflow-hidden flex flex-col">
-      <div className="flex items-center justify-between px-10 py-4 flex-shrink-0">
+    <section className="bg-[#1f1f1f] h-[calc(100vh-5rem)] overflow-hidden flex flex-col pb-16 sm:pb-0">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between px-4 sm:px-10 py-4 gap-4 flex-shrink-0">
         <div className="flex items-center gap-4">
           <BackButton />
           <h1 className="text-[#f5f5f5] text-2xl font-bold tracking-wider">
             Orders
           </h1>
         </div>
-        <div className="flex items-center justify-around gap-4">
-          <button onClick={() => setStatus("all")} className={`text-[#ababab] text-lg ${status === "all" && "bg-[#383838] rounded-lg px-5 py-2"}  rounded-lg px-5 py-2 font-semibold`}>
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide w-full md:w-auto">
+          <button onClick={() => setStatus("all")} className={`text-[#ababab] text-sm sm:text-lg rounded-lg px-3 sm:px-5 py-1.5 sm:py-2 font-semibold whitespace-nowrap flex-shrink-0 ${status === "all" ? "bg-[#383838] text-white" : ""}`}>
             All
           </button>
-          <button onClick={() => setStatus("progress")} className={`text-[#ababab] text-lg ${status === "progress" && "bg-[#383838] rounded-lg px-5 py-2"}  rounded-lg px-5 py-2 font-semibold`}>
+          <button onClick={() => setStatus("progress")} className={`text-[#ababab] text-sm sm:text-lg rounded-lg px-3 sm:px-5 py-1.5 sm:py-2 font-semibold whitespace-nowrap flex-shrink-0 ${status === "progress" ? "bg-[#383838] text-white" : ""}`}>
             In Progress
           </button>
-          <button onClick={() => setStatus("ready")} className={`text-[#ababab] text-lg ${status === "ready" && "bg-[#383838] rounded-lg px-5 py-2"}  rounded-lg px-5 py-2 font-semibold`}>
+          <button onClick={() => setStatus("ready")} className={`text-[#ababab] text-sm sm:text-lg rounded-lg px-3 sm:px-5 py-1.5 sm:py-2 font-semibold whitespace-nowrap flex-shrink-0 ${status === "ready" ? "bg-[#383838] text-white" : ""}`}>
             Ready
           </button>
-          <button onClick={() => setStatus("completed")} className={`text-[#ababab] text-lg ${status === "completed" && "bg-[#383838] rounded-lg px-5 py-2"}  rounded-lg px-5 py-2 font-semibold`}>
+          <button onClick={() => setStatus("completed")} className={`text-[#ababab] text-sm sm:text-lg rounded-lg px-3 sm:px-5 py-1.5 sm:py-2 font-semibold whitespace-nowrap flex-shrink-0 ${status === "completed" ? "bg-[#383838] text-white" : ""}`}>
             Completed
           </button>
-          <button onClick={() => setStatus("cancelled")} className={`text-[#ababab] text-lg ${status === "cancelled" && "bg-[#383838] rounded-lg px-5 py-2"}  rounded-lg px-5 py-2 font-semibold`}>
+          <button onClick={() => setStatus("cancelled")} className={`text-[#ababab] text-sm sm:text-lg rounded-lg px-3 sm:px-5 py-1.5 sm:py-2 font-semibold whitespace-nowrap flex-shrink-0 ${status === "cancelled" ? "bg-[#383838] text-white" : ""}`}>
             Cancelled
           </button>
         </div>
       </div>
 
       <div 
-        className="px-16 py-4 flex-1 min-h-0 overflow-y-auto scrollbar-hide pb-24"
-        style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '20px' }}
+        className="px-4 sm:px-16 py-4 flex-1 min-h-0 overflow-y-auto scrollbar-hide pb-24"
+        style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}
       >
         {
           filteredOrders.length > 0 ? (

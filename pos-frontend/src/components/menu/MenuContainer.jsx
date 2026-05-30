@@ -196,12 +196,12 @@ const MenuContainer = ({ isAdminMode }) => {
       <div className="flex flex-col w-full h-full">
 
         {/* Header with Add Category */}
-        <div className="flex justify-between items-center px-10 pt-4 pb-2">
-          <h2 className="text-gray-400 font-semibold text-lg">Menu Categories</h2>
+        <div className="flex justify-between items-center px-4 sm:px-10 pt-4 pb-2">
+          <h2 className="text-gray-400 font-semibold text-md sm:text-lg">Menu Categories</h2>
           {isAdminMode && (
             <button
               onClick={() => setIsAddCategoryOpen(true)}
-              className="bg-yellow-500 text-black px-4 py-2 rounded-md flex items-center gap-2 font-bold hover:bg-yellow-400 transition"
+              className="bg-yellow-500 text-black px-3 sm:px-4 py-1.5 sm:py-2 rounded-md flex items-center gap-2 font-bold hover:bg-yellow-400 transition text-xs sm:text-sm"
             >
               <FaPlus /> Add Category
             </button>
@@ -209,14 +209,14 @@ const MenuContainer = ({ isAdminMode }) => {
         </div>
 
         {/* Horizontal Category Pills */}
-        <div className="px-10 pb-4">
-          <div className="flex flex-wrap gap-3 pb-2">
+        <div className="px-4 sm:px-10 pb-4">
+          <div className="flex flex-wrap gap-2 sm:gap-3 pb-2">
             {menuData?.map((menu) => (
               <button
                 key={menu.id}
                 className={`
-                  flex items-center gap-2 px-6 py-3 rounded-full whitespace-nowrap
-                  font-semibold transition-all duration-200 relative group
+                  flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full whitespace-nowrap
+                  font-semibold transition-all duration-200 relative group text-xs sm:text-sm
                   ${selectedCategory?.id === menu.id
                     ? 'bg-yellow-500 text-black shadow-lg scale-105'
                     : 'bg-[#2a2a2a] text-gray-300 hover:bg-[#333] hover:scale-102'
@@ -227,9 +227,9 @@ const MenuContainer = ({ isAdminMode }) => {
                   setItemCounts({});
                 }}
               >
-                <span className="text-xl">{menu.icon}</span>
+                <span className="text-lg">{menu.icon}</span>
                 <span>{menu.name}</span>
-                <span className="text-xs opacity-70">({menu.items?.length || 0})</span>
+                <span className="text-[10px] sm:text-xs opacity-70">({menu.items?.length || 0})</span>
 
                 {isAdminMode && (
                   <div className="flex gap-1 ml-2">
@@ -255,14 +255,14 @@ const MenuContainer = ({ isAdminMode }) => {
         <hr className="border-[#2a2a2a] border-t-2" />
 
         {/* Items Header */}
-        <div className="flex justify-between items-center px-10 py-4">
-          <h2 className="text-white font-bold text-xl">
+        <div className="flex justify-between items-center px-4 sm:px-10 py-4">
+          <h2 className="text-white font-bold text-lg sm:text-xl">
             {selectedCategory ? selectedCategory.name : "Select a Category"}
           </h2>
           {selectedCategory && isAdminMode && (
             <button
               onClick={handleAddItemClick}
-              className="bg-[#2e4a40] text-[#02ca3a] px-4 py-2 rounded-md flex items-center gap-2 font-bold hover:bg-[#3d6356] transition"
+              className="bg-[#2e4a40] text-[#02ca3a] px-3 sm:px-4 py-1.5 sm:py-2 rounded-md flex items-center gap-2 font-bold hover:bg-[#3d6356] transition text-xs sm:text-sm"
             >
               <FaPlus /> Add Item
             </button>
@@ -270,7 +270,7 @@ const MenuContainer = ({ isAdminMode }) => {
         </div>
 
         {/* Items Grid - Modern Cards */}
-        <div className="grid grid-cols-3 gap-5 px-10 py-2 w-full overflow-y-auto scrollbar-hide pb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 px-4 sm:px-10 py-2 w-full overflow-y-auto scrollbar-hide pb-6">
           {selectedCategory?.items?.map((item) => (
             <div
               key={item.id}
