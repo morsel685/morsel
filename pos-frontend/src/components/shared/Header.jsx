@@ -20,12 +20,14 @@ const Header = () => {
     mutationFn: () => logout(),
     onSuccess: (data) => {
       console.log(data);
+      localStorage.removeItem("accessToken");
       dispatch(removeUser());
       navigate("/auth");
     },
     onError: (error) => {
       console.log("Logout error:", error);
       // Fallback: Clear user state and redirect anyway so user is not stuck
+      localStorage.removeItem("accessToken");
       dispatch(removeUser());
       navigate("/auth");
     },

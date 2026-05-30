@@ -30,6 +30,9 @@ const Login = () => {
       const { data } = res;
       console.log(data);
       const { _id, name, email, phone, role } = data.data;
+      if (data.token) {
+        localStorage.setItem("accessToken", data.token);
+      }
       dispatch(setUser({ _id, name, email, phone, role }));
       navigate("/");
     },
