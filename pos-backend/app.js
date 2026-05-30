@@ -8,7 +8,6 @@ const app = express();
 
 
 const PORT = config.port;
-connectDB();
 
 // Middlewares
 const allowedOrigins = [
@@ -61,6 +60,10 @@ app.use(globalErrorHandler);
 
 
 // Server
-app.listen(PORT, () => {
-    console.log(`☑️  POS Server is listening on port ${PORT}`);
-})
+connectDB().then(() => {
+    app.listen(PORT, () => {
+        console.log(`☑️  POS Server is listening on port ${PORT}`);
+    });
+}).catch((err) => {
+    console.error("Failed to start server due to database connection error:", err);
+});
