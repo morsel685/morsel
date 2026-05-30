@@ -31,7 +31,7 @@ const PaymentHistory = () => {
             <h2 className="text-[#f5f5f5] text-2xl font-semibold mb-6">
                 Payment History
             </h2>
-            <div className="bg-[#1a1a1a] rounded-lg shadow-lg h-[calc(100vh-24rem)] overflow-y-auto scrollbar-hide">
+            <div className="bg-[#1a1a1a] rounded-lg shadow-lg min-h-[300px] md:h-[calc(100vh-24rem)] overflow-y-auto scrollbar-hide">
                 <table className="w-full text-left text-[#f5f5f5]">
                     <thead className="bg-[#262626] text-[#ababab] uppercase text-sm font-medium sticky top-0 z-10 shadow-md">
                         <tr>

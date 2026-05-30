@@ -24,7 +24,7 @@ const RecentOrders = () => {
     }
   })
 
-  const { data: resData, isError } = useQuery({
+  const { data: resData, isError, isLoading } = useQuery({
     queryKey: ["orders"],
     queryFn: async () => {
       return await getOrders();
@@ -32,11 +32,20 @@ const RecentOrders = () => {
     placeholderData: keepPreviousData,
   });
 
-  if (isError) {
-    enqueueSnackbar("Something went wrong!", { variant: "error" });
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+      </div>
+    );
   }
 
-  console.log(resData.data.data);
+  if (isError) {
+    enqueueSnackbar("Something went wrong!", { variant: "error" });
+    return <div className="text-red-500 text-center p-4">Failed to load orders.</div>;
+  }
+
+  console.log(resData?.data?.data);
 
   return (
     <div className="container mx-auto bg-[#262626] p-4 rounded-lg">
