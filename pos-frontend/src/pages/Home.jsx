@@ -100,11 +100,11 @@ const Home = () => {
   }, [])
 
   return (
-    <section className="bg-[#1f1f1f]  h-[calc(100vh-5rem)] overflow-hidden flex gap-3">
+    <section className="bg-[#1f1f1f] min-h-[calc(100vh-4rem)] lg:h-[calc(100vh-5rem)] lg:overflow-hidden flex flex-col lg:flex-row gap-3 pb-24 lg:pb-0">
       {/* Left Div */}
-      <div className="flex-[3] h-full overflow-y-auto scrollbar-hide pb-6">
+      <div className="w-full lg:flex-[3] lg:h-full lg:overflow-y-auto scrollbar-hide pb-6">
         <Greetings />
-        <div className="flex items-center w-full gap-3 px-8 mt-8">
+        <div className="flex flex-col sm:flex-row items-stretch w-full gap-4 px-4 sm:px-8 mt-8">
           <MiniCard
             title="Pending Payments"
             icon={<BsCashCoin />}
@@ -121,7 +121,7 @@ const Home = () => {
         <AnalyticsReport />
       </div>
       {/* Right Div */}
-      <div className="flex-[2] h-full overflow-y-auto scrollbar-hide pb-6">
+      <div className="w-full lg:flex-[2] lg:h-full lg:overflow-y-auto scrollbar-hide pb-6">
         <RecentOrders />
       </div>
       <BottomNav />

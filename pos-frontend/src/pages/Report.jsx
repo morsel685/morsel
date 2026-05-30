@@ -167,20 +167,20 @@ const Report = () => {
         );
     }
 
-    return (
-        <section className="bg-[#1f1f1f] h-[calc(100vh-5rem)] overflow-hidden">
-            <div className="flex items-center justify-between px-10 py-4">
+  return (
+        <section className="bg-[#1f1f1f] min-h-[calc(100vh-5rem)] overflow-y-auto pb-20 lg:h-[calc(100vh-5rem)] lg:overflow-hidden flex flex-col">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 sm:px-10 py-4 gap-2 flex-shrink-0">
                 <div className="flex items-center gap-4">
                     <BackButton />
                     <h1 className="text-[#f5f5f5] text-2xl font-bold tracking-wider">
                         Daily Report
                     </h1>
                 </div>
-                <p className="text-[#ababab] text-lg">{reportData?.date || new Date().toISOString().split('T')[0]}</p>
+                <p className="text-[#ababab] text-md sm:text-lg">{reportData?.date || new Date().toISOString().split('T')[0]}</p>
             </div>
 
-            <div className="px-16 py-4 overflow-y-auto h-[calc(100vh-14rem)]">
-                <div className="grid grid-cols-3 gap-6">
+            <div className="px-4 sm:px-16 py-4 overflow-y-auto lg:h-[calc(100vh-14rem)] min-h-0 flex-1">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Order Summary Card */}
                     <div className="bg-[#262626] p-6 rounded-xl">
                         <h2 className="text-[#ababab] text-sm font-semibold mb-4">ORDER SUMMARY</h2>
@@ -257,23 +257,23 @@ const Report = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex gap-4 mt-8">
+                <div className="flex flex-col sm:flex-row gap-4 mt-8">
                     <button
                         onClick={handleExportExcel}
-                        className="flex-1 py-4 bg-green-600 hover:bg-green-500 text-white rounded-xl font-semibold text-lg"
+                        className="flex-1 py-3.5 bg-green-600 hover:bg-green-500 text-white rounded-xl font-semibold text-md sm:text-lg"
                     >
                         Export to Excel (CSV)
                     </button>
                     <button
                         onClick={handlePrintReport}
-                        className="flex-1 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-semibold text-lg"
+                        className="flex-1 py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-semibold text-md sm:text-lg"
                     >
                         Print Report
                     </button>
                     <button
                         onClick={() => setShowConfirmClose(true)}
                         disabled={reportData?.summary?.pendingOrders > 0}
-                        className={`flex-1 py-4 rounded-xl font-semibold text-lg ${reportData?.summary?.pendingOrders > 0
+                        className={`flex-1 py-3.5 rounded-xl font-semibold text-md sm:text-lg ${reportData?.summary?.pendingOrders > 0
                             ? "bg-gray-600 text-gray-400 cursor-not-allowed"
                             : "bg-red-600 hover:bg-red-500 text-white"
                             }`}

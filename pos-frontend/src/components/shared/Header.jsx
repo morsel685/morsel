@@ -38,46 +38,46 @@ const Header = () => {
   };
 
   return (
-    <header className="flex justify-between items-center py-4 px-8 bg-[#1a1a1a]">
+    <header className="flex justify-between items-center py-3 px-4 md:px-8 bg-[#1a1a1a] border-b border-[#262626] z-50 relative">
       {/* LOGO */}
       <div onClick={() => navigate("/")} className="flex items-center cursor-pointer">
-        <img src={logo} className="h-10" alt="Morsel logo" />
+        <img src={logo} className="h-8 md:h-10" alt="Morsel logo" />
       </div>
 
       {/* SEARCH */}
-      <div className="flex items-center gap-4 bg-[#1f1f1f] rounded-[15px] px-5 py-2 w-[500px]">
+      <div className="hidden md:flex items-center gap-4 bg-[#1f1f1f] rounded-[15px] px-5 py-2 w-[300px] lg:w-[500px]">
         <FaSearch className="text-[#f5f5f5]" />
         <input
           type="text"
           placeholder="Search"
-          className="bg-[#1f1f1f] outline-none text-[#f5f5f5]"
+          className="bg-[#1f1f1f] outline-none text-[#f5f5f5] w-full"
         />
       </div>
 
       {/* LOGGED USER DETAILS */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 md:gap-4">
         {userData.role === "Admin" && (
-          <div onClick={() => navigate("/dashboard")} className="bg-[#1f1f1f] rounded-[15px] p-3 cursor-pointer">
-            <MdDashboard className="text-[#f5f5f5] text-2xl" />
+          <div onClick={() => navigate("/dashboard")} className="bg-[#1f1f1f] rounded-[15px] p-2 md:p-3 cursor-pointer">
+            <MdDashboard className="text-[#f5f5f5] text-xl md:text-2xl" />
           </div>
         )}
-        <div className="bg-[#1f1f1f] rounded-[15px] p-3 cursor-pointer">
-          <FaBell className="text-[#f5f5f5] text-2xl" />
+        <div className="bg-[#1f1f1f] rounded-[15px] p-2 md:p-3 cursor-pointer">
+          <FaBell className="text-[#f5f5f5] text-xl md:text-2xl" />
         </div>
-        <div className="flex items-center gap-3 cursor-pointer">
-          <FaUserCircle className="text-[#f5f5f5] text-4xl" />
-          <div className="flex flex-col items-start">
-            <h1 className="text-md text-[#f5f5f5] font-semibold tracking-wide">
+        <div className="flex items-center gap-2 md:gap-3 cursor-pointer">
+          <FaUserCircle className="text-[#f5f5f5] text-3xl md:text-4xl" />
+          <div className="hidden sm:flex flex-col items-start">
+            <h1 className="text-sm md:text-md text-[#f5f5f5] font-semibold tracking-wide">
               {userData.name || "TEST USER"}
             </h1>
-            <p className="text-xs text-[#ababab] font-medium">
+            <p className="text-[10px] md:text-xs text-[#ababab] font-medium">
               {userData.role || "Role"}
             </p>
           </div>
           <IoLogOut
             onClick={handleLogout}
-            className="text-[#f5f5f5] ml-2"
-            size={40}
+            className="text-[#f5f5f5] ml-1 md:ml-2"
+            size={30}
           />
         </div>
       </div>
