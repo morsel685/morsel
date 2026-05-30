@@ -210,7 +210,7 @@ const MenuContainer = ({ isAdminMode }) => {
 
         {/* Horizontal Category Pills */}
         <div className="px-4 sm:px-10 pb-4">
-          <div className="flex flex-wrap gap-2 sm:gap-3 pb-2">
+          <div className="flex flex-nowrap gap-2 sm:gap-3 pb-2 overflow-x-auto scrollbar-hide w-full">
             {menuData?.map((menu) => (
               <button
                 key={menu.id}
