@@ -52,7 +52,7 @@ const Login = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="Enter employee email"
+              placeholder="Enter Employee Email"
               className="bg-transparent flex-1 text-white focus:outline-none"
               required
             />
