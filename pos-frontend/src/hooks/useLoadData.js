@@ -17,6 +17,7 @@ const useLoadData = () => {
         const { _id, name, email, phone, role } = data.data;
         dispatch(setUser({ _id, name, email, phone, role }));
       } catch (error) {
+        localStorage.removeItem("accessToken");
         dispatch(removeUser());
         navigate("/auth");
         console.log(error);
