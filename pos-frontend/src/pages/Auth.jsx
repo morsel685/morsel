@@ -15,7 +15,7 @@ const Auth = () => {
   return (
     <div className="flex min-h-screen w-full">
       {/* Left Section */}
-      <div className="w-1/2 relative flex items-center justify-center bg-cover">
+      <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center bg-cover">
         {/* BG Image */}
         <img className="w-full h-full object-cover" src={restaurant} alt="Restaurant Image" />
 
@@ -32,29 +32,28 @@ const Auth = () => {
       </div>
 
       {/* Right Section */}
-      <div className="w-1/2 min-h-screen bg-[#1a1a1a] p-10">
-        <div className="flex justify-center">
-          <img src={logo} alt="Morsel Logo" className="h-20" />
+      <div className="w-full lg:w-1/2 min-h-screen bg-[#1a1a1a] p-6 sm:p-10 flex flex-col justify-center">
+        <div className="max-w-md w-full mx-auto">
+          <div className="flex justify-center">
+            <img src={logo} alt="Morsel Logo" className="h-20" />
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl text-center mt-8 font-semibold text-yellow-400 mb-8 sm:mb-10">
+            {isRegister ? "Employee Registration" : "Employee Login"}
+          </h2>
+
+          {/* Components */}
+          {isRegister ? <Register setIsRegister={setIsRegister} /> : <Login />}
+
+          <div className="flex justify-center mt-6">
+            <p className="text-sm text-[#ababab]">
+              {isRegister ? "Already have an account? " : "Don't have an account? "}
+              <a onClick={() => setIsRegister(!isRegister)} className="text-yellow-400 font-semibold hover:underline" href="#">
+                {isRegister ? "Sign in" : "Sign up"}
+              </a>
+            </p>
+          </div>
         </div>
-
-        <h2 className="text-4xl text-center mt-10 font-semibold text-yellow-400 mb-10">
-          {isRegister ? "Employee Registration" : "Employee Login"}
-        </h2>
-
-        {/* Components */}
-        {isRegister ? <Register setIsRegister={setIsRegister} /> : <Login />}
-
-
-        <div className="flex justify-center mt-6">
-          <p className="text-sm text-[#ababab]">
-            {isRegister ? "Already have an account?" : "Don't have an account?"}
-            <a onClick={() => setIsRegister(!isRegister)} className="text-yellow-400 font-semibold hover:underline" href="#">
-              {isRegister ? "Sign in" : "Sign up"}
-            </a>
-          </p>
-        </div>
-
-
       </div>
     </div>
   );
