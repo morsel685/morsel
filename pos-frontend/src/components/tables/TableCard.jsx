@@ -7,6 +7,7 @@ import { setCart } from "../../redux/slices/cartSlice";
 import { updateTable, updateOrder } from "../../https/index";
 import { FaLongArrowAltRight, FaEdit, FaTrash } from "react-icons/fa";
 import { enqueueSnackbar } from "notistack";
+import receiptLogo from "../../assets/images/receipt_logo.png";
 
 const TableCard = ({ id, name, status, initials, seats, currentOrder, onUpdate, onEdit, onDelete }) => {
   const dispatch = useDispatch();
@@ -32,7 +33,8 @@ const TableCard = ({ id, name, status, initials, seats, currentOrder, onUpdate, 
       customerName: currentOrder.customerDetails?.name,
       customerPhone: currentOrder.customerDetails?.phone,
       guests: currentOrder.customerDetails?.guests,
-      table: { tableId: id, tableNo: name }
+      table: { tableId: id, tableNo: name },
+      originalItems: currentOrder.items || []
     }));
 
     dispatch(setCart(currentOrder.items || []));
@@ -157,8 +159,7 @@ const TableCard = ({ id, name, status, initials, seats, currentOrder, onUpdate, 
             html { height: auto; }
             body { font-family: 'Courier New', monospace; width: 80mm; height: auto; padding: 3mm 4mm; font-size: 12px; line-height: 1.4; margin: 0; font-weight: bold; }
             .header { text-align: center; margin-bottom: 6px; }
-            .logo { width: 50px; height: auto; display: block; margin: 0 auto 4px auto; }
-            .restaurant-name { font-size: 18px; font-weight: bold; margin-bottom: 2px; }
+            .logo { width: 150px; height: auto; display: block; margin: 0 auto 5px auto; }
             .address, .contact { font-size: 11px; margin-bottom: 1px; font-weight: bold; }
             .divider { border-top: 2px dashed #000; margin: 4px 0; }
             .info-row { display: flex; justify-content: space-between; font-size: 11px; margin: 2px 0; font-weight: bold; }
@@ -180,7 +181,7 @@ const TableCard = ({ id, name, status, initials, seats, currentOrder, onUpdate, 
         </head>
         <body>
           <div class="header">
-            <div class="restaurant-name">MORSEL</div>
+            <img class="logo" src="${receiptLogo}" alt="Morsel Logo" />
             <div class="address">B-4/67 Kalyani, Nadia, 741235</div>
             <div class="contact">Mobile: 7003655540</div>
           </div>

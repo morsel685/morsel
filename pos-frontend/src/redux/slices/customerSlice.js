@@ -7,7 +7,8 @@ const initialState = {
     guests: 0,
     table: null,
     orderType: "Dine In",  // "Dine In" or "Take Away"
-    editingOrderId: null  // Track if we're editing an existing order
+    editingOrderId: null,  // Track if we're editing an existing order
+    originalItems: []      // Track original items to compute KOT differences
 }
 
 
@@ -30,6 +31,7 @@ const customerSlice = createSlice({
             state.table = null;
             state.orderType = "Dine In";
             state.editingOrderId = null;
+            state.originalItems = [];
         },
 
         updateTable: (state, action) => {
@@ -47,10 +49,12 @@ const customerSlice = createSlice({
             state.guests = action.payload.guests || 1;
             state.table = action.payload.table;
             state.orderType = action.payload.orderType || "Dine In";
+            state.originalItems = action.payload.originalItems || [];
         },
 
         clearEditingOrder: (state) => {
             state.editingOrderId = null;
+            state.originalItems = [];
         }
 
     }

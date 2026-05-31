@@ -4,11 +4,33 @@ import { FaCircle } from "react-icons/fa";
 import { formatDateAndTime, getAvatarName } from "../../utils/index";
 import { updateOrderStatus, updateTable, updateOrder } from "../../https/index";
 import { enqueueSnackbar } from "notistack";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { setEditingOrder } from "../../redux/slices/customerSlice";
+import { setCart } from "../../redux/slices/cartSlice";
+import receiptLogo from "../../assets/images/receipt_logo.png";
 
 const OrderCard = ({ order, onUpdate }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [isUpdating, setIsUpdating] = useState(false);
   const [showPaymentOptions, setShowPaymentOptions] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(null);
+
+  const handleModifyOrder = () => {
+    dispatch(setEditingOrder({
+      orderId: order._id,
+      customerName: order.customerDetails?.name,
+      customerPhone: order.customerDetails?.phone,
+      guests: order.customerDetails?.guests,
+      table: order.table ? { tableId: order.table._id, tableNo: order.table.tableNo } : null,
+      orderType: order.orderType,
+      originalItems: order.items || []
+    }));
+
+    dispatch(setCart(order.items || []));
+    navigate('/menu');
+  };
 
   const handleStatusUpdate = async (newStatus) => {
     // If completing order and no payment selected, show payment options
@@ -82,7 +104,7 @@ const OrderCard = ({ order, onUpdate }) => {
             html { height: auto; }
             body { font-family: 'Courier New', monospace; width: 80mm; height: auto; padding: 3mm 4mm; font-size: 12px; line-height: 1.4; margin: 0; font-weight: bold; }
             .header { text-align: center; margin-bottom: 6px; }
-            .restaurant-name { font-size: 18px; font-weight: bold; margin-bottom: 2px; }
+            .logo { width: 150px; height: auto; display: block; margin: 0 auto 5px auto; }
             .address, .contact { font-size: 11px; margin-bottom: 1px; font-weight: bold; }
             .divider { border-top: 2px dashed #000; margin: 4px 0; }
             .info-row { display: flex; justify-content: space-between; font-size: 11px; margin: 2px 0; font-weight: bold; }
@@ -104,7 +126,7 @@ const OrderCard = ({ order, onUpdate }) => {
         </head>
         <body>
           <div class="header">
-            <div class="restaurant-name">MORSEL</div>
+            <img class="logo" src="${receiptLogo}" alt="Morsel Logo" />
             <div class="address">B-4/67 Kalyani, Nadia, 741235</div>
             <div class="contact">Mobile: 7003655540</div>
           </div>
@@ -296,6 +318,16 @@ const OrderCard = ({ order, onUpdate }) => {
             {isUpdating ? "Processing..." : "Complete Order"}
           </button>
         </div>
+      )}
+
+      {/* Modify Order Button */}
+      {nextStatus && (
+        <button
+          onClick={handleModifyOrder}
+          className="w-full mt-4 py-3 bg-yellow-600 hover:bg-yellow-500 text-white rounded-lg font-semibold text-lg transition-all"
+        >
+          Modify Order
+        </button>
       )}
 
       {/* Status Update Button */}
