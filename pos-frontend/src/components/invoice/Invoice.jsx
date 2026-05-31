@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { motion } from "framer-motion";
 import { FaCheck } from "react-icons/fa6";
-import logo from "../../assets/images/logo.png";
+import receiptLogo from "../../assets/images/receipt_logo.png";
 
 const Invoice = ({ orderInfo, setShowInvoice }) => {
   const invoiceRef = useRef(null);
@@ -71,15 +71,10 @@ const Invoice = ({ orderInfo, setShowInvoice }) => {
               margin-bottom: 8px;
             }
             .header-section img {
-              width: 50px;
+              width: 150px;
               height: auto;
               display: block;
               margin: 0 auto 5px auto;
-            }
-            .restaurant-name {
-              font-size: 16px;
-              font-weight: bold;
-              margin-bottom: 3px;
             }
             .address {
               font-size: 10px;
@@ -212,8 +207,7 @@ const Invoice = ({ orderInfo, setShowInvoice }) => {
         <div ref={invoiceRef} className="receipt font-mono text-xs">
           {/* Header Section - Logo, Name, Address, Contact */}
           <div className="header-section">
-            <img src={logo} alt="Morsel" />
-            <div className="restaurant-name">MORSEL</div>
+            <img src={receiptLogo} alt="Morsel Logo" />
             <div className="address">B-4/67 Kalyani, Nadia, 741235</div>
             <div className="contact">Mobile: 7003655540</div>
           </div>
