@@ -56,3 +56,19 @@ input:-webkit-autofill:active {
   transition: background-color 5000s ease-in-out 0s;
   caret-color: #ffffff;
 }
+
+/* Modern sleek dark scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #383838;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+}

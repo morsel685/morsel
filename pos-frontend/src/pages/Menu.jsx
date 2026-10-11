@@ -21,12 +21,12 @@ const Menu = () => {
   const customerData = useSelector((state) => state.customer);
 
   return (
-    <section className="bg-[#1f1f1f] min-h-screen lg:h-screen flex flex-col">
+    <section className="bg-[#1f1f1f] h-[calc(100vh-5rem)] min-h-[calc(100vh-5rem)] flex flex-col overflow-hidden">
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col lg:flex-row gap-3 overflow-y-auto lg:overflow-hidden pb-20 lg:pb-0 px-2 sm:px-4">
+      <div className="flex-1 flex flex-col lg:flex-row gap-3 min-h-0 overflow-y-auto lg:overflow-hidden px-2 sm:px-4">
         {/* Left Div - Menu */}
-        <div className={`${isAdminMode ? "w-full" : "w-full lg:flex-[3]"} flex flex-col flex-shrink-0 lg:flex-shrink lg:overflow-hidden`}>
-          <div className="flex items-center justify-between px-4 sm:px-10 py-4">
+        <div className={`${isAdminMode ? "w-full" : "w-full lg:flex-[3]"} flex flex-col min-h-0 h-full`}>
+          <div className="flex items-center justify-between px-2 sm:px-6 py-3 flex-shrink-0">
             <div className="flex items-center gap-3 sm:gap-4">
               <BackButton />
               <h1 className="text-[#f5f5f5] text-xl sm:text-2xl font-bold tracking-wider">
@@ -51,19 +51,19 @@ const Menu = () => {
             )}
           </div>
 
-          <div className="flex-1 overflow-y-auto lg:overflow-y-auto">
+          <div className="flex-1 min-h-0 overflow-y-auto pb-28 sm:pb-32">
             <MenuContainer isAdminMode={isAdminMode} />
           </div>
         </div>
 
         {/* Right Div - Cart & Bill */}
         {!isAdminMode && (
-          <div className="w-full lg:flex-[1] bg-[#1a1a1a] mt-4 lg:mr-3 rounded-lg pt-2 flex flex-col max-h-none lg:max-h-[calc(100vh-7rem)] px-2 sm:px-0">
+          <div className="w-full lg:flex-[1] bg-[#1a1a1a] mt-2 lg:mt-0 lg:mr-2 rounded-xl pt-2 flex flex-col min-h-0 lg:h-full border border-[#2a2a2a] pb-28 lg:pb-4 px-2 sm:px-0">
             {/* Customer Info */}
             <CustomerInfo />
             <hr className="border-[#2a2a2a] border-t-2" />
             {/* Cart Items */}
-            <div className="flex-1 overflow-y-auto scrollbar-hide min-h-[150px] lg:min-h-0">
+            <div className="flex-1 overflow-y-auto min-h-[150px] lg:min-h-0">
               <CartInfo />
             </div>
             <hr className="border-[#2a2a2a] border-t-2" />
