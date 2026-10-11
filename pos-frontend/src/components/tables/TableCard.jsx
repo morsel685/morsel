@@ -152,88 +152,116 @@ const TableCard = ({ id, name, status, initials, seats, currentOrder, onUpdate, 
           <title>Receipt - Table ${name}</title>
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
-            @page { size: 80mm auto !important; margin: 0 !important; }
+            @page { size: 80mm auto; margin: 0; }
             @media print {
-              html, body { width: 80mm !important; height: auto !important; margin: 0 !important; padding: 0 !important; }
+              html, body { width: 80mm !important; margin: 0 !important; padding: 0 !important; }
+              .receipt-container {
+                width: 74mm !important;
+                max-width: 74mm !important;
+                margin-left: 1mm !important;
+                padding: 1mm 1.5mm !important;
+              }
             }
-            html { height: auto; }
-            body { font-family: 'Courier New', monospace; width: 80mm; height: auto; padding: 3mm 4mm; font-size: 12px; line-height: 1.4; margin: 0; font-weight: bold; }
-            .header { text-align: center; margin-bottom: 6px; }
-            .logo { width: 150px; height: auto; display: block; margin: 0 auto 5px auto; }
-            .address, .contact { font-size: 11px; margin-bottom: 1px; font-weight: bold; }
-            .divider { border-top: 2px dashed #000; margin: 4px 0; }
-            .info-row { display: flex; justify-content: space-between; font-size: 11px; margin: 2px 0; font-weight: bold; }
-            .customer-name { font-size: 12px; margin: 4px 0; font-weight: bold; }
-            .items-table { width: 100%; border-collapse: collapse; margin: 4px 0; font-size: 11px; font-weight: bold; }
-            .items-table th { text-align: left; font-weight: bold; padding: 2px 1px; border-bottom: 2px solid #000; }
-            .items-table td { padding: 2px 1px; font-size: 11px; font-weight: bold; }
-            .items-table .sn { width: 8%; text-align: center; }
-            .items-table .item { width: 38%; }
-            .items-table .qty { width: 12%; text-align: center; }
-            .items-table .rate { width: 20%; text-align: right; }
-            .items-table .amount { width: 22%; text-align: right; }
-            .total-row { display: flex; justify-content: space-between; font-size: 12px; margin: 3px 0; font-weight: bold; }
-            .total-row.grand { font-weight: bold; font-size: 14px; border-top: 2px solid #000; padding-top: 5px; margin-top: 5px; }
-            .payment-row, .fssai, .thank-you { text-align: center; font-size: 12px; margin: 5px 0; font-weight: bold; }
-            .fssai { font-size: 10px; margin-top: 10px; font-weight: bold; }
-            .thank-you { font-weight: bold; }
+            html, body {
+              width: 80mm;
+              margin: 0;
+              padding: 0;
+              background: #fff;
+              color: #000;
+            }
+            body {
+              font-family: 'Courier New', Courier, monospace;
+              font-size: 11.5px;
+              line-height: 1.35;
+              font-weight: 600;
+            }
+            .receipt-container {
+              width: 74mm;
+              max-width: 74mm;
+              margin-left: 1mm;
+              padding: 1mm 1.5mm;
+              box-sizing: border-box;
+              overflow-x: hidden;
+            }
+            .header { text-align: center; margin-bottom: 4px; }
+            .logo { width: 110px; height: auto; display: block; margin: 0 auto 3px auto; }
+            .address, .contact { font-size: 10.5px; margin-bottom: 1px; font-weight: 600; line-height: 1.25; }
+            .divider { border-top: 1px dashed #000; margin: 4px 0; }
+            .info-row { display: flex; justify-content: space-between; font-size: 11px; margin: 1.5px 0; font-weight: 600; }
+            .customer-name { font-size: 11.5px; margin: 2px 0; font-weight: 600; }
+            .items-table { width: 100%; table-layout: fixed; border-collapse: collapse; margin: 4px 0; font-size: 10px; font-weight: 600; }
+            .items-table th { text-align: left; font-weight: bold; padding: 2px 1px; border-bottom: 1px dashed #000; font-size: 10px; }
+            .items-table td { padding: 2px 1px; font-size: 10px; vertical-align: top; }
+            .items-table .sn { width: 6%; text-align: left; }
+            .items-table .item { width: 40%; word-break: break-word; padding-right: 2px; }
+            .items-table .qty { width: 10%; text-align: center; }
+            .items-table .rate { width: 22%; text-align: right; white-space: nowrap; padding-right: 8px; }
+            .items-table .amount { width: 22%; text-align: right; white-space: nowrap; }
+            .total-row { display: flex; justify-content: space-between; font-size: 11.5px; margin: 2px 0; font-weight: 600; }
+            .total-row.grand { font-weight: bold; font-size: 13px; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 3px 0; margin: 3px 0; }
+            .payment-row { text-align: center; font-size: 11px; margin: 3px 0; font-weight: 600; }
+            .fssai { text-align: center; font-size: 10px; margin-top: 4px; font-weight: 600; }
+            .thank-you { text-align: center; font-size: 11.5px; font-weight: bold; margin-top: 3px; }
           </style>
         </head>
         <body>
-          <div class="header">
-            <img class="logo" src="${receiptLogo}" alt="Morsel Logo" />
-            <div class="address">B-4/67 Kalyani, Nadia, 741235</div>
-            <div class="contact">Mobile: 7003655540</div>
-          </div>
-          <div class="divider"></div>
-          <div class="customer-name"><strong>Name:</strong> ${currentOrder?.customerDetails?.name || 'Guest'}</div>
-          <div class="divider"></div>
-          <div class="info-row">
-            <span>${formattedDate} ${formattedTime}</span>
-            <span>Dine In: Table ${name}</span>
-          </div>
-          <div class="info-row">
-            <span>Cashier: Staff</span>
-            <span>Bill No.: ${billNumber}</span>
-          </div>
-          <div class="divider"></div>
-          <table class="items-table">
-            <thead>
-              <tr>
-                <th class="sn">SN</th>
-                <th class="item">Item</th>
-                <th class="qty">Qty</th>
-                <th class="rate">Price</th>
-                <th class="amount">Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${currentOrder?.items?.map((item, index) => `
+          <div class="receipt-container">
+            <div class="header">
+              <img class="logo" src="${receiptLogo}" alt="Morsel Logo" />
+              <div class="address">B-4/67 Kalyani, Nadia, 741235</div>
+              <div class="contact">Mobile: 7003655540</div>
+            </div>
+            <div class="divider"></div>
+            <div class="customer-name"><strong>Name:</strong> ${currentOrder?.customerDetails?.name || 'Guest'}</div>
+            <div class="divider"></div>
+            <div class="info-row">
+              <span>Date: ${formattedDate} ${formattedTime}</span>
+            </div>
+            <div class="info-row">
+              <span>Dine In: Table ${name}</span>
+              <span>Bill No: ${billNumber}</span>
+            </div>
+            <div class="info-row">
+              <span>Cashier: Staff</span>
+            </div>
+            <div class="divider"></div>
+            <table class="items-table">
+              <thead>
                 <tr>
-                  <td class="sn">${index + 1}</td>
-                  <td class="item">${item.name}</td>
-                  <td class="qty">${item.quantity || 1}</td>
-                  <td class="rate">₹${(item.pricePerQuantity || item.price / (item.quantity || 1)).toFixed(2)}</td>
-                  <td class="amount">₹${item.price?.toFixed(2)}</td>
+                  <th class="sn">SN</th>
+                  <th class="item">Item</th>
+                  <th class="qty">Qty</th>
+                  <th class="rate">Price</th>
+                  <th class="amount">Amount</th>
                 </tr>
-              `).join('') || ''}
-            </tbody>
-          </table>
-          <div class="divider"></div>
-          <div class="total-row">
-            <span>Total Qty: ${totalQuantity}</span>
-            <span>Sub Total</span>
-            <span>₹${currentOrder?.bills?.total?.toFixed(2) || '0.00'}</span>
+              </thead>
+              <tbody>
+                ${currentOrder?.items?.map((item, index) => `
+                  <tr>
+                    <td class="sn">${index + 1}</td>
+                    <td class="item">${item.name}</td>
+                    <td class="qty">${item.quantity || 1}</td>
+                    <td class="rate">₹${(item.pricePerQuantity || item.price / (item.quantity || 1)).toFixed(2)}</td>
+                    <td class="amount">₹${item.price?.toFixed(2)}</td>
+                  </tr>
+                `).join('') || ''}
+              </tbody>
+            </table>
+            <div class="divider"></div>
+            <div class="total-row">
+              <span>Total Qty: ${totalQuantity}</span>
+              <span>Sub Total: ₹${currentOrder?.bills?.total?.toFixed(2) || '0.00'}</span>
+            </div>
+            <div class="total-row grand">
+              <span>Grand Total</span>
+              <span>₹${currentOrder?.bills?.total?.toFixed(2) || '0.00'}</span>
+            </div>
+            <div class="divider"></div>
+            <div class="payment-row"><strong>Payment Mode:</strong> ${paymentMethod}</div>
+            <div class="divider"></div>
+            <div class="fssai">FSSAI Lic No.: 22824123000364</div>
+            <div class="thank-you">Thank You! Visit Again!!!</div>
           </div>
-          <div class="total-row grand">
-            <span>Grand Total</span>
-            <span>₹${currentOrder?.bills?.total?.toFixed(2) || '0.00'}</span>
-          </div>
-          <div class="divider"></div>
-          <div class="payment-row"><strong>Payment Mode:</strong> ${paymentMethod}</div>
-          <div class="divider"></div>
-          <div class="fssai">FSSAI Lic No.: 22824123000364</div>
-          <div class="thank-you">Thank You! Visit Again!!!</div>
         </body>
       </html>
     `;

@@ -51,58 +51,85 @@ const printKOTReceipt = (order, kotItems, tableNo = null) => {
         <title>KOT - ${orderNumber}</title>
         <style>
           * { margin: 0; padding: 0; box-sizing: border-box; }
-          @page { size: 80mm auto !important; margin: 0 !important; }
+          @page { size: 80mm auto; margin: 0; }
           @media print {
-            html, body { width: 80mm !important; height: auto !important; margin: 0 !important; padding: 0 !important; }
+            html, body { width: 80mm !important; margin: 0 !important; padding: 0 !important; }
+            .receipt-container {
+              width: 74mm !important;
+              max-width: 74mm !important;
+              margin-left: 1mm !important;
+              padding: 1mm 1.5mm !important;
+            }
           }
-          html { height: auto; }
-          body { font-family: 'Courier New', monospace; width: 80mm; height: auto; padding: 3mm 4mm; font-size: 12px; line-height: 1.4; margin: 0; font-weight: bold; }
-          .header { text-align: center; margin-bottom: 6px; }
-          .title { font-size: 16px; font-weight: bold; border: 2px solid #000; padding: 4px; margin-bottom: 6px; }
-          .divider { border-top: 2px dashed #000; margin: 4px 0; }
-          .info-row { display: flex; justify-content: space-between; font-size: 11px; margin: 2px 0; font-weight: bold; }
-          .items-table { width: 100%; border-collapse: collapse; margin: 6px 0; font-size: 12px; font-weight: bold; }
-          .items-table th { text-align: left; font-weight: bold; padding: 2px 1px; border-bottom: 2px solid #000; }
-          .items-table td { padding: 3px 1px; font-size: 12px; font-weight: bold; }
+          html, body {
+            width: 80mm;
+            margin: 0;
+            padding: 0;
+            background: #fff;
+            color: #000;
+          }
+          body {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 10.5px;
+            line-height: 1.35;
+            font-weight: bold;
+          }
+          .receipt-container {
+            width: 74mm;
+            max-width: 74mm;
+            margin-left: 1mm;
+            padding: 1mm 1.5mm;
+            box-sizing: border-box;
+            overflow-x: hidden;
+          }
+          .header { text-align: center; margin-bottom: 5px; }
+          .title { font-size: 13px; font-weight: bold; border: 2px solid #000; padding: 3px; margin-bottom: 4px; }
+          .divider { border-top: 1px dashed #000; margin: 4px 0; }
+          .info-row { display: flex; justify-content: space-between; font-size: 9.5px; margin: 2px 0; font-weight: bold; }
+          .items-table { width: 100%; table-layout: fixed; border-collapse: collapse; margin: 4px 0; font-size: 10px; font-weight: bold; }
+          .items-table th { text-align: left; font-weight: bold; padding: 2px 1px; border-bottom: 1px dashed #000; }
+          .items-table td { padding: 2.5px 1px; font-size: 10px; font-weight: bold; }
           .items-table .sn { width: 10%; text-align: center; }
-          .items-table .item { width: 70%; }
-          .items-table .qty { width: 20%; text-align: center; font-size: 14px; }
-          .footer { text-align: center; font-size: 10px; margin-top: 10px; border-top: 1px dashed #000; padding-top: 4px; }
+          .items-table .item { width: 70%; word-break: break-word; }
+          .items-table .qty { width: 20%; text-align: center; font-size: 12px; }
+          .footer { text-align: center; font-size: 9.5px; margin-top: 8px; border-top: 1px dashed #000; padding-top: 4px; }
         </style>
       </head>
       <body>
-        <div class="header">
-          <div class="title">KITCHEN ORDER TICKET</div>
-        </div>
-        <div class="info-row">
-          <span>Date: ${formattedDate} ${formattedTime}</span>
-        </div>
-        <div class="info-row">
-          <span>KOT No: ${orderNumber}</span>
-          <span>${orderType}</span>
-        </div>
-        <div class="divider"></div>
-        <table class="items-table">
-          <thead>
-            <tr>
-              <th class="sn">SN</th>
-              <th class="item">Item Description</th>
-              <th class="qty">Qty</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${kotItems.map((item, index) => `
+        <div class="receipt-container">
+          <div class="header">
+            <div class="title">KITCHEN ORDER TICKET</div>
+          </div>
+          <div class="info-row">
+            <span>Date: ${formattedDate} ${formattedTime}</span>
+          </div>
+          <div class="info-row">
+            <span>KOT No: ${orderNumber}</span>
+            <span>${orderType}</span>
+          </div>
+          <div class="divider"></div>
+          <table class="items-table">
+            <thead>
               <tr>
-                <td class="sn">${index + 1}</td>
-                <td class="item">${item.name}</td>
-                <td class="qty">${item.quantity}</td>
+                <th class="sn">SN</th>
+                <th class="item">Item Description</th>
+                <th class="qty">Qty</th>
               </tr>
-            `).join('')}
-          </tbody>
-        </table>
-        <div class="divider"></div>
-        <div class="footer">
-          *** KOT - Send to Kitchen ***
+            </thead>
+            <tbody>
+              ${kotItems.map((item, index) => `
+                <tr>
+                  <td class="sn">${index + 1}</td>
+                  <td class="item">${item.name}</td>
+                  <td class="qty">${item.quantity}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+          <div class="divider"></div>
+          <div class="footer">
+            *** KOT - Send to Kitchen ***
+          </div>
         </div>
       </body>
     </html>

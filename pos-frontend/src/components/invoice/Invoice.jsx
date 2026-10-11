@@ -56,108 +56,142 @@ const Invoice = ({ orderInfo, setShowInvoice }) => {
               size: 80mm auto;
               margin: 0;
             }
-            body {
-              font-family: 'Courier New', monospace;
+            @media print {
+              html, body { width: 80mm !important; margin: 0 !important; padding: 0 !important; }
+              .receipt {
+                width: 74mm !important;
+                max-width: 74mm !important;
+                margin-left: 1mm !important;
+                padding: 1mm 1.5mm !important;
+              }
+            }
+            html, body {
               width: 80mm;
-              padding: 3mm;
-              font-size: 11px;
-              line-height: 1.3;
+              margin: 0;
+              padding: 0;
+              background: #fff;
+              color: #000;
+            }
+            body {
+              font-family: 'Courier New', Courier, monospace;
+              font-size: 11.5px;
+              line-height: 1.35;
+              font-weight: 600;
             }
             .receipt {
-              width: 100%;
+              width: 74mm;
+              max-width: 74mm;
+              margin-left: 1mm;
+              padding: 1mm 1.5mm;
+              box-sizing: border-box;
+              overflow-x: hidden;
+              word-break: break-word;
             }
             .header-section {
               text-align: center;
-              margin-bottom: 8px;
+              margin-bottom: 4px;
             }
             .header-section img {
-              width: 150px;
+              width: 110px;
+              max-width: 70%;
               height: auto;
               display: block;
-              margin: 0 auto 5px auto;
+              margin: 0 auto 3px auto;
             }
             .address {
-              font-size: 10px;
+              font-size: 10.5px;
+              line-height: 1.25;
               margin-bottom: 2px;
             }
             .contact {
-              font-size: 10px;
+              font-size: 10.5px;
             }
             .divider {
               border-top: 1px dashed #000;
-              margin: 6px 0;
+              margin: 4px 0;
             }
-            .info-row {
-              display: flex;
-              justify-content: space-between;
-              font-size: 10px;
-              margin: 3px 0;
-            }
-            .info-row span {
-              flex: 1;
-            }
-            .info-row .right {
-              text-align: right;
+            .info-line {
+              font-size: 11px;
+              line-height: 1.3;
+              margin: 1.5px 0;
             }
             .customer-name {
-              font-size: 11px;
-              margin: 5px 0;
+              font-size: 11.5px;
+              margin: 2px 0;
+              font-weight: 600;
             }
             .items-table {
               width: 100%;
+              table-layout: fixed;
               border-collapse: collapse;
-              margin: 5px 0;
-              font-size: 10px;
+              margin: 4px 0;
+              font-size: 10.5px;
             }
             .items-table th {
               text-align: left;
               font-weight: bold;
-              padding: 3px 1px;
-              border-bottom: 1px solid #000;
-              font-size: 10px;
+              padding: 2px 1px;
+              border-bottom: 1px dashed #000;
+              font-size: 10.5px;
             }
             .items-table td {
               padding: 2px 1px;
-              font-size: 10px;
+              font-size: 10.5px;
               vertical-align: top;
             }
-            .items-table .sn { width: 8%; text-align: center; }
-            .items-table .item { width: 38%; }
-            .items-table .qty { width: 12%; text-align: center; }
-            .items-table .rate { width: 20%; text-align: right; }
-            .items-table .amount { width: 22%; text-align: right; }
+            .items-table .item {
+              width: 44%;
+              word-break: break-word;
+              padding-right: 2px;
+            }
+            .items-table .qty {
+              width: 12%;
+              text-align: center;
+            }
+            .items-table .rate {
+              width: 22%;
+              text-align: right;
+              white-space: nowrap;
+              padding-right: 8px;
+            }
+            .items-table .amount {
+              width: 22%;
+              text-align: right;
+              white-space: nowrap;
+            }
             .totals-section {
-              margin-top: 5px;
-              padding-top: 5px;
-              border-top: 1px solid #000;
+              margin-top: 3px;
+              padding-top: 3px;
+              border-top: 1px dashed #000;
             }
             .total-row {
               display: flex;
               justify-content: space-between;
-              font-size: 11px;
-              margin: 3px 0;
+              font-size: 11.5px;
+              margin: 1.5px 0;
             }
             .total-row.grand {
               font-weight: bold;
-              font-size: 13px;
+              font-size: 12.5px;
               border-top: 1px solid #000;
-              padding-top: 5px;
-              margin-top: 5px;
+              border-bottom: 1px solid #000;
+              padding: 3px 0;
+              margin: 3px 0;
             }
             .payment-row {
               text-align: center;
               font-size: 11px;
-              margin: 8px 0;
+              margin: 3px 0;
             }
             .fssai {
               text-align: center;
-              font-size: 9px;
-              margin-top: 10px;
+              font-size: 10px;
+              margin-top: 4px;
             }
             .thank-you {
               text-align: center;
-              margin-top: 5px;
-              font-size: 11px;
+              margin-top: 3px;
+              font-size: 11.5px;
               font-weight: bold;
             }
           </style>
@@ -221,36 +255,30 @@ const Invoice = ({ orderInfo, setShowInvoice }) => {
 
           <div className="divider"></div>
 
-          {/* Order Info Row */}
-          <div className="info-row">
-            <span>{formattedDate} {formattedTime}</span>
-            <span className="right">{orderType}</span>
-          </div>
-          <div className="info-row">
-            <span>Cashier: Staff</span>
-            <span className="right">Bill No.: {billNumber}</span>
-          </div>
+          {/* Order Info - Stacked */}
+          <div className="info-line">{formattedDate} {formattedTime}</div>
+          <div className="info-line">{orderType}</div>
+          <div className="info-line">Cashier: Staff</div>
+          <div className="info-line">Bill: {billNumber}</div>
 
           <div className="divider"></div>
 
-          {/* Items Table - 5 Columns: SN, Item, QTY, Rate, Amount */}
+          {/* Items Table - 4 Columns: Item, Qty, Price, Amount */}
           <table className="items-table">
             <thead>
               <tr>
-                <th className="sn">SN</th>
                 <th className="item">Item</th>
                 <th className="qty">Qty</th>
                 <th className="rate">Price</th>
-                <th className="amount">Amount</th>
+                <th className="amount">Total</th>
               </tr>
             </thead>
             <tbody>
               {orderInfo.items.map((item, index) => (
                 <tr key={index}>
-                  <td className="sn">{index + 1}</td>
                   <td className="item">{item.name}</td>
                   <td className="qty">{item.quantity}</td>
-                  <td className="rate">₹{item.pricePerQuantity?.toFixed(2) || item.price / item.quantity}</td>
+                  <td className="rate">₹{item.pricePerQuantity?.toFixed(2) || (item.price / item.quantity).toFixed(2)}</td>
                   <td className="amount">₹{item.price?.toFixed(2)}</td>
                 </tr>
               ))}
@@ -260,11 +288,13 @@ const Invoice = ({ orderInfo, setShowInvoice }) => {
           {/* Totals Section */}
           <div className="totals-section">
             <div className="total-row">
-              <span>Total Qty: {totalQuantity}</span>
+              <span>Total Qty</span>
+              <span>{totalQuantity}</span>
+            </div>
+            <div className="total-row">
               <span>Sub Total</span>
               <span>₹{orderInfo.bills.total?.toFixed(2)}</span>
             </div>
-
             <div className="total-row grand">
               <span>Grand Total</span>
               <span>₹{orderInfo.bills.total?.toFixed(2)}</span>
