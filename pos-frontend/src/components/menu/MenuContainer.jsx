@@ -193,33 +193,34 @@ const MenuContainer = ({ isAdminMode }) => {
   return (
     <>
       {/* Categories Horizontal Tabs */}
-      <div className="flex flex-col w-full h-full">
+      <div className="flex flex-col w-full">
 
-        {/* Header with Add Category */}
-        <div className="flex justify-between items-center px-4 sm:px-10 pt-4 pb-2">
-          <h2 className="text-gray-400 font-semibold text-md sm:text-lg">Menu Categories</h2>
-          {isAdminMode && (
-            <button
-              onClick={() => setIsAddCategoryOpen(true)}
-              className="bg-yellow-500 text-black px-3 sm:px-4 py-1.5 sm:py-2 rounded-md flex items-center gap-2 font-bold hover:bg-yellow-400 transition text-xs sm:text-sm"
-            >
-              <FaPlus /> Add Category
-            </button>
-          )}
-        </div>
+        {/* Sticky Categories Bar */}
+        <div className="sticky top-0 bg-[#1f1f1f] z-20 pb-3 pt-2 px-2 sm:px-6 border-b border-[#2a2a2a]/80 shadow-md">
+          {/* Header with Add Category */}
+          <div className="flex justify-between items-center pb-2">
+            <h2 className="text-gray-400 font-semibold text-sm sm:text-base">Menu Categories</h2>
+            {isAdminMode && (
+              <button
+                onClick={() => setIsAddCategoryOpen(true)}
+                className="bg-yellow-500 text-black px-3 sm:px-4 py-1.5 sm:py-2 rounded-md flex items-center gap-2 font-bold hover:bg-yellow-400 transition text-xs sm:text-sm active:scale-95"
+              >
+                <FaPlus /> Add Category
+              </button>
+            )}
+          </div>
 
-        {/* Horizontal Category Pills */}
-        <div className="px-4 sm:px-10 pb-4">
-          <div className="flex flex-nowrap gap-2 sm:gap-3 pb-2 overflow-x-auto scrollbar-hide w-full">
+          {/* Horizontal Category Pills */}
+          <div className="flex flex-nowrap gap-2 sm:gap-3 overflow-x-auto pb-1 pt-1 w-full">
             {menuData?.map((menu) => (
               <button
                 key={menu.id}
                 className={`
-                  flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full whitespace-nowrap
-                  font-semibold transition-all duration-200 relative group text-xs sm:text-sm
+                  flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full whitespace-nowrap
+                  font-semibold transition-all duration-200 relative group text-xs sm:text-sm flex-shrink-0
                   ${selectedCategory?.id === menu.id
                     ? 'bg-yellow-500 text-black shadow-lg scale-105'
-                    : 'bg-[#2a2a2a] text-gray-300 hover:bg-[#333] hover:scale-102'
+                    : 'bg-[#2a2a2a] text-gray-300 hover:bg-[#333] hover:text-white'
                   }
                 `}
                 onClick={() => {
@@ -227,23 +228,25 @@ const MenuContainer = ({ isAdminMode }) => {
                   setItemCounts({});
                 }}
               >
-                <span className="text-lg">{menu.icon}</span>
+                <span className="text-base sm:text-lg">{menu.icon}</span>
                 <span>{menu.name}</span>
                 <span className="text-[10px] sm:text-xs opacity-70">({menu.items?.length || 0})</span>
 
                 {isAdminMode && (
-                  <div className="flex gap-1 ml-2">
+                  <div className="flex gap-1 ml-1 sm:ml-2">
                     <button
                       onClick={(e) => handleEditCategory(menu, e)}
-                      className="p-1.5 bg-blue-600 rounded-full text-white hover:bg-blue-500 shadow"
+                      className="p-1 bg-blue-600 rounded-full text-white hover:bg-blue-500 shadow"
+                      title="Edit Category"
                     >
-                      <FaEdit size={10} />
+                      <FaEdit size={9} />
                     </button>
                     <button
                       onClick={(e) => handleDeleteCategory(menu.id, e)}
-                      className="p-1.5 bg-red-600 rounded-full text-white hover:bg-red-500 shadow"
+                      className="p-1 bg-red-600 rounded-full text-white hover:bg-red-500 shadow"
+                      title="Delete Category"
                     >
-                      <FaTrash size={10} />
+                      <FaTrash size={9} />
                     </button>
                   </div>
                 )}
@@ -252,109 +255,142 @@ const MenuContainer = ({ isAdminMode }) => {
           </div>
         </div>
 
-        <hr className="border-[#2a2a2a] border-t-2" />
-
-        {/* Items Header */}
-        <div className="flex justify-between items-center px-4 sm:px-10 py-4">
-          <h2 className="text-white font-bold text-lg sm:text-xl">
-            {selectedCategory ? selectedCategory.name : "Select a Category"}
-          </h2>
-          {selectedCategory && isAdminMode && (
-            <button
-              onClick={handleAddItemClick}
-              className="bg-[#2e4a40] text-[#02ca3a] px-3 sm:px-4 py-1.5 sm:py-2 rounded-md flex items-center gap-2 font-bold hover:bg-[#3d6356] transition text-xs sm:text-sm"
-            >
-              <FaPlus /> Add Item
-            </button>
-          )}
-        </div>
-
-        {/* Items Grid - Modern Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 px-4 sm:px-10 py-2 w-full overflow-y-auto scrollbar-hide pb-6">
-          {selectedCategory?.items?.map((item) => (
-            <div
-              key={item.id}
-              className="flex flex-col bg-gradient-to-br from-[#252525] to-[#1a1a1a] rounded-2xl p-5 hover:shadow-2xl hover:scale-102 transition-all duration-300 relative group border border-[#333] hover:border-yellow-500"
-            >
-              {/* Admin Edit/Delete Buttons */}
-              {isAdminMode && (
-                <div className="absolute top-3 right-3 flex gap-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button
-                    onClick={() => handleEditItem(item)}
-                    className="p-2 bg-blue-600 rounded-lg text-white hover:bg-blue-500 shadow-lg"
-                  >
-                    <FaEdit size={12} />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteItem(item.id)}
-                    className="p-2 bg-red-600 rounded-lg text-white hover:bg-red-500 shadow-lg"
-                  >
-                    <FaTrash size={12} />
-                  </button>
-                </div>
+        {/* Items Section */}
+        <div className="px-2 sm:px-6 pt-4">
+          {/* Items Header */}
+          <div className="flex justify-between items-center pb-4">
+            <div className="flex items-center gap-3">
+              <h2 className="text-white font-bold text-lg sm:text-2xl">
+                {selectedCategory ? selectedCategory.name : "Select a Category"}
+              </h2>
+              {selectedCategory && (
+                <span className="text-xs text-gray-400 bg-[#2a2a2a] px-2.5 py-1 rounded-full font-medium">
+                  {selectedCategory.items?.length || 0} {selectedCategory.items?.length === 1 ? 'item' : 'items'}
+                </span>
               )}
+            </div>
+            {selectedCategory && isAdminMode && (
+              <button
+                onClick={handleAddItemClick}
+                className="bg-[#2e4a40] text-[#02ca3a] px-3 sm:px-4 py-1.5 sm:py-2 rounded-md flex items-center gap-2 font-bold hover:bg-[#3d6356] transition text-xs sm:text-sm active:scale-95"
+              >
+                <FaPlus /> Add Item
+              </button>
+            )}
+          </div>
 
-              {/* Item Icon/Emoji Placeholder */}
-              <div className="w-full h-32 bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 rounded-xl flex items-center justify-center mb-4 border border-yellow-500/20">
-                <span className="text-6xl opacity-80">{selectedCategory.icon}</span>
-              </div>
-
-              {/* Item Name */}
-              <h3 className="text-white font-bold text-lg mb-2 truncate" title={item.name}>
-                {item.name}
-              </h3>
-
-              {/* Price */}
-              <div className="flex items-baseline gap-2 mb-4">
-                <span className="text-yellow-500 font-bold text-2xl">₹{item.price}</span>
-                <span className="text-gray-500 text-sm">per item</span>
-              </div>
-
-              {/* Quantity Selector & Add to Cart */}
-              {!isAdminMode && (
-                <div className="flex items-center gap-3 mt-auto">
-                  <div className="flex items-center bg-[#1f1f1f] rounded-lg overflow-hidden border border-[#333]">
+          {/* Items Grid - Responsive auto-fill across small, medium, large, and extra large screens */}
+          <div
+            className="w-full"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))',
+              gap: '1.25rem'
+            }}
+          >
+            {selectedCategory?.items?.map((item) => (
+              <div
+                key={item.id}
+                className="flex flex-col bg-gradient-to-br from-[#252525] to-[#1a1a1a] rounded-2xl p-4 sm:p-5 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 relative group border border-[#333] hover:border-yellow-500/60"
+              >
+                {/* Admin Edit/Delete Buttons */}
+                {isAdminMode && (
+                  <div className="absolute top-3 right-3 flex gap-2 z-10 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                     <button
-                      onClick={() => decrement(item.id)}
-                      className="text-yellow-500 px-3 py-2 hover:bg-[#2a2a2a] transition font-bold"
+                      onClick={() => handleEditItem(item)}
+                      className="p-2 bg-blue-600 rounded-lg text-white hover:bg-blue-500 shadow-lg active:scale-95 transition"
+                      title="Edit Item"
                     >
-                      −
+                      <FaEdit size={12} />
                     </button>
-                    <span className="text-white px-4 py-2 min-w-[40px] text-center font-semibold">
-                      {itemCounts[item.id] || 0}
-                    </span>
                     <button
-                      onClick={() => increment(item.id)}
-                      className="text-yellow-500 px-3 py-2 hover:bg-[#2a2a2a] transition font-bold"
+                      onClick={() => handleDeleteItem(item.id)}
+                      className="p-2 bg-red-600 rounded-lg text-white hover:bg-red-500 shadow-lg active:scale-95 transition"
+                      title="Delete Item"
                     >
-                      +
+                      <FaTrash size={12} />
                     </button>
                   </div>
-                  <button
-                    onClick={() => handleAddToCart(item)}
-                    className="flex-1 bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 rounded-lg flex justify-center items-center gap-2 transition shadow-lg hover:shadow-xl"
-                  >
-                    <FaShoppingCart size={14} />
-                    Add
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
+                )}
 
-          {(!selectedCategory || selectedCategory.items?.length === 0) && (
-            <div className="col-span-3 text-center text-gray-500 py-20">
-              <p className="text-xl">No items found in this category.</p>
-              {isAdminMode && selectedCategory && (
-                <button
-                  onClick={handleAddItemClick}
-                  className="mt-4 bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-500 transition"
-                >
-                  Add First Item
-                </button>
-              )}
-            </div>
-          )}
+                {/* Item Icon/Emoji Placeholder or Image */}
+                <div className="w-full h-32 bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 rounded-xl flex items-center justify-center mb-4 border border-yellow-500/20 overflow-hidden">
+                  {item.image ? (
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-full h-full object-cover rounded-xl"
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        if (e.target.nextSibling) e.target.nextSibling.style.display = "block";
+                      }}
+                    />
+                  ) : null}
+                  <span
+                    className="text-6xl opacity-80"
+                    style={{ display: item.image ? "none" : "block" }}
+                  >
+                    {selectedCategory?.icon || "🍽️"}
+                  </span>
+                </div>
+
+                {/* Item Name */}
+                <h3 className="text-white font-bold text-base sm:text-lg mb-1 truncate" title={item.name}>
+                  {item.name}
+                </h3>
+
+                {/* Price */}
+                <div className="flex items-baseline gap-2 mb-4">
+                  <span className="text-yellow-500 font-bold text-xl sm:text-2xl">₹{item.price}</span>
+                  <span className="text-gray-500 text-xs sm:text-sm">per item</span>
+                </div>
+
+                {/* Quantity Selector & Add to Cart */}
+                {!isAdminMode && (
+                  <div className="flex items-center gap-2 sm:gap-3 mt-auto">
+                    <div className="flex items-center bg-[#1f1f1f] rounded-lg overflow-hidden border border-[#333]">
+                      <button
+                        onClick={() => decrement(item.id)}
+                        className="text-yellow-500 px-2.5 sm:px-3 py-2 hover:bg-[#2a2a2a] transition font-bold"
+                      >
+                        −
+                      </button>
+                      <span className="text-white px-2 sm:px-4 py-2 min-w-[32px] sm:min-w-[40px] text-center font-semibold text-sm">
+                        {itemCounts[item.id] || 0}
+                      </span>
+                      <button
+                        onClick={() => increment(item.id)}
+                        className="text-yellow-500 px-2.5 sm:px-3 py-2 hover:bg-[#2a2a2a] transition font-bold"
+                      >
+                        +
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => handleAddToCart(item)}
+                      className="flex-1 bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-3 rounded-lg flex justify-center items-center gap-2 transition shadow-lg hover:shadow-xl text-xs sm:text-sm active:scale-95"
+                    >
+                      <FaShoppingCart size={14} />
+                      Add
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
+
+            {(!selectedCategory || selectedCategory.items?.length === 0) && (
+              <div className="col-span-full text-center text-gray-500 py-20">
+                <p className="text-xl">No items found in this category.</p>
+                {isAdminMode && selectedCategory && (
+                  <button
+                    onClick={handleAddItemClick}
+                    className="mt-4 bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-500 transition active:scale-95"
+                  >
+                    Add First Item
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
