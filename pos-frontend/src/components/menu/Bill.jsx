@@ -70,7 +70,7 @@ const printKOTReceipt = (order, kotItems, tableNo = null) => {
           }
           body {
             font-family: 'Courier New', Courier, monospace;
-            font-size: 10.5px;
+            font-size: 12px;
             line-height: 1.35;
             font-weight: bold;
           }
@@ -83,16 +83,16 @@ const printKOTReceipt = (order, kotItems, tableNo = null) => {
             overflow-x: hidden;
           }
           .header { text-align: center; margin-bottom: 5px; }
-          .title { font-size: 13px; font-weight: bold; border: 2px solid #000; padding: 3px; margin-bottom: 4px; }
-          .divider { border-top: 1px dashed #000; margin: 4px 0; }
-          .info-row { display: flex; justify-content: space-between; font-size: 9.5px; margin: 2px 0; font-weight: bold; }
-          .items-table { width: 100%; table-layout: fixed; border-collapse: collapse; margin: 4px 0; font-size: 10px; font-weight: bold; }
-          .items-table th { text-align: left; font-weight: bold; padding: 2px 1px; border-bottom: 1px dashed #000; }
-          .items-table td { padding: 2.5px 1px; font-size: 10px; font-weight: bold; }
+          .title { font-size: 15px; font-weight: bold; border: 2px solid #000; padding: 4px; margin-bottom: 4px; }
+          .divider { border-top: 2px dashed #000; margin: 4px 0; }
+          .info-row { display: flex; justify-content: space-between; font-size: 11.5px; margin: 2px 0; font-weight: bold; }
+          .items-table { width: 100%; table-layout: fixed; border-collapse: collapse; margin: 5px 0; font-size: 12px; font-weight: bold; }
+          .items-table th { text-align: left; font-weight: bold; padding: 3px 1px; border-bottom: 2px solid #000; font-size: 12px; }
+          .items-table td { padding: 3px 1px; font-size: 12.5px; font-weight: bold; }
           .items-table .sn { width: 10%; text-align: center; }
-          .items-table .item { width: 70%; word-break: break-word; }
-          .items-table .qty { width: 20%; text-align: center; font-size: 12px; }
-          .footer { text-align: center; font-size: 9.5px; margin-top: 8px; border-top: 1px dashed #000; padding-top: 4px; }
+          .items-table .item { width: 68%; word-break: break-word; }
+          .items-table .qty { width: 22%; text-align: center; font-size: 14px; }
+          .footer { text-align: center; font-size: 11px; margin-top: 8px; border-top: 1px dashed #000; padding-top: 4px; }
         </style>
       </head>
       <body>
