@@ -318,42 +318,42 @@ const Bill = () => {
 
   return (
     <>
-      <div className="flex items-center justify-between px-5 mt-2">
-        <p className="text-xs text-[#ababab] font-medium mt-2">
+      <div className="flex items-center justify-between px-4 mt-1.5">
+        <p className="text-xs text-[#ababab] font-medium">
           Items({cartData.length})
         </p>
-        <h1 className="text-[#f5f5f5] text-md font-bold">
+        <h1 className="text-[#f5f5f5] text-sm font-bold">
           ₹{total.toFixed(2)}
         </h1>
       </div>
-      <div className="flex items-center justify-between px-5 mt-2">
-        <p className="text-xs text-[#ababab] font-medium mt-2">
+      <div className="flex items-center justify-between px-4 mt-1">
+        <p className="text-xs text-[#ababab] font-medium">
           Grand Total
         </p>
-        <h1 className="text-[#f5f5f5] text-md font-bold">
+        <h1 className="text-[#f5f5f5] text-base font-bold">
           ₹{totalPriceWithTax.toFixed(2)}
         </h1>
       </div>
 
       {/* Show order type and editing indicator */}
-      <div className="mx-5 mt-3 flex gap-2">
-        <div className={`flex-1 px-3 py-2 rounded-lg text-center ${isTakeAway ? "bg-orange-600/20 border border-orange-600" : "bg-green-600/20 border border-green-600"}`}>
-          <p className={`text-sm font-semibold ${isTakeAway ? "text-orange-500" : "text-green-500"}`}>
+      <div className="mx-4 mt-2 flex gap-2">
+        <div className={`flex-1 px-2.5 py-1.5 rounded-lg text-center ${isTakeAway ? "bg-orange-600/20 border border-orange-600" : "bg-green-600/20 border border-green-600"}`}>
+          <p className={`text-xs font-semibold ${isTakeAway ? "text-orange-500" : "text-green-500"}`}>
             {isTakeAway ? "🥡 Take Away" : "🍽️ Dine In"}
           </p>
         </div>
         {isEditing && (
-          <div className="flex-1 px-3 py-2 bg-yellow-600/20 border border-yellow-600 rounded-lg text-center">
-            <p className="text-yellow-500 text-sm font-semibold">✏️ Editing</p>
+          <div className="flex-1 px-2.5 py-1.5 bg-yellow-600/20 border border-yellow-600 rounded-lg text-center">
+            <p className="text-yellow-500 text-xs font-semibold">✏️ Editing</p>
           </div>
         )}
       </div>
 
-      <div className="flex items-center gap-3 px-5 mt-4">
+      <div className="flex items-center gap-3 px-4 mt-2.5">
         <button
           onClick={handleSaveOrder}
           disabled={isUpdating}
-          className={`px-4 py-3 w-full rounded-lg font-semibold text-lg ${isEditing
+          className={`px-4 py-2.5 w-full rounded-lg font-bold text-base shadow-md active:scale-95 transition ${isEditing
             ? "bg-yellow-600 text-white"
             : isTakeAway
               ? "bg-orange-500 text-white"

@@ -21,9 +21,9 @@ const Menu = () => {
   const customerData = useSelector((state) => state.customer);
 
   return (
-    <section className="bg-[#1f1f1f] h-[calc(100vh-4.5rem)] min-h-[calc(100vh-4.5rem)] flex flex-col overflow-hidden">
+    <section className="bg-[#1f1f1f] h-[calc(100vh-8.75rem)] min-h-[calc(100vh-8.75rem)] flex flex-col overflow-hidden">
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col sm:flex-row gap-3 min-h-0 overflow-y-auto sm:overflow-hidden px-2 sm:px-4">
+      <div className="flex-1 flex flex-col sm:flex-row gap-3 min-h-0 overflow-y-auto sm:overflow-hidden px-2 sm:px-4 pb-20 sm:pb-0">
         {/* Left Div - Menu */}
         <div className={`${isAdminMode ? "w-full" : "flex-1 min-w-0"} flex flex-col min-h-0 h-full`}>
           <div className="flex items-center justify-between px-2 sm:px-6 py-2.5 flex-shrink-0">
