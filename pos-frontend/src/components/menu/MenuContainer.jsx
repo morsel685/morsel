@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { GrRadialSelected } from "react-icons/gr";
 import { FaShoppingCart, FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 import { useDispatch } from "react-redux";
@@ -7,6 +7,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getMenu, addCategory, addItem, updateCategory, deleteCategory, updateItem, deleteItem } from "../../https";
 import Modal from "../shared/Modal";
 import { useSnackbar } from "notistack";
+import { sortMenuCategoriesAndItems } from "../../utils/menuSorter";
 
 const MenuContainer = ({ isAdminMode }) => {
   const dispatch = useDispatch();
@@ -28,13 +29,19 @@ const MenuContainer = ({ isAdminMode }) => {
   const [editingItem, setEditingItem] = useState(null);
 
   // Fetch Menu Data
-  const { data: menuData, isLoading } = useQuery({
+  const { data: rawMenuData, isLoading } = useQuery({
     queryKey: ["menu"],
     queryFn: async () => {
       const res = await getMenu();
       return res.data.data;
     }
   });
+
+  // Sort categories and dishes according to restaurant structure
+  const menuData = useMemo(() => {
+    if (!rawMenuData) return [];
+    return sortMenuCategoriesAndItems(rawMenuData);
+  }, [rawMenuData]);
 
   // Set initial selected category
   useEffect(() => {
