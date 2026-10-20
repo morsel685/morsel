@@ -239,7 +239,10 @@ const TableCard = ({ id, name, status, initials, seats, currentOrder, onUpdate, 
                 ${currentOrder?.items?.map((item, index) => `
                   <tr>
                     <td class="sn">${index + 1}</td>
-                    <td class="item">${item.name}</td>
+                    <td class="item">
+                      ${item.name}
+                      ${item.notes ? `<div style="font-size: 9.5px; font-weight: bold; margin-top: 1px;">* ${item.notes}</div>` : ''}
+                    </td>
                     <td class="qty">${item.quantity || 1}</td>
                     <td class="rate">₹${(item.pricePerQuantity || item.price / (item.quantity || 1)).toFixed(2)}</td>
                     <td class="amount">₹${item.price?.toFixed(2)}</td>

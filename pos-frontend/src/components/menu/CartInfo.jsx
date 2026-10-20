@@ -114,10 +114,10 @@ const CartInfo = () => {
                   {item.notes && (
                     <div
                       onClick={() => handleOpenNoteModal(item)}
-                      className="inline-flex items-center gap-1 mt-1 text-[11px] text-yellow-400 bg-yellow-500/10 px-2 py-0.5 rounded border border-yellow-500/20 cursor-pointer hover:bg-yellow-500/20 transition max-w-full"
+                      className="inline-flex items-center gap-1 mt-1 text-[11px] font-bold text-yellow-300 bg-yellow-500/20 px-2 py-0.5 rounded border border-yellow-500/40 cursor-pointer hover:bg-yellow-500/30 transition max-w-full shadow-sm"
                       title="Click to edit instructions"
                     >
-                      <span className="truncate">📝 {item.notes}</span>
+                      <span className="truncate font-bold tracking-wide">📝 {item.notes}</span>
                     </div>
                   )}
                 </div>

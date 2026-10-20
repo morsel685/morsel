@@ -276,7 +276,10 @@ const Invoice = ({ orderInfo, setShowInvoice }) => {
             <tbody>
               {orderInfo.items.map((item, index) => (
                 <tr key={index}>
-                  <td className="item">{item.name}</td>
+                  <td className="item">
+                    {item.name}
+                    {item.notes ? <div style={{ fontSize: "10px", fontWeight: "bold" }}>* {item.notes}</div> : null}
+                  </td>
                   <td className="qty">{item.quantity}</td>
                   <td className="rate">₹{item.pricePerQuantity?.toFixed(2) || (item.price / item.quantity).toFixed(2)}</td>
                   <td className="amount">₹{item.price?.toFixed(2)}</td>

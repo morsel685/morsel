@@ -125,7 +125,7 @@ const printKOTReceipt = (order, kotItems, tableNo = null) => {
                   <td class="sn">${index + 1}</td>
                   <td class="item">
                     ${item.name}
-                    ${item.notes ? `<div style="font-size: 11px; font-weight: normal; font-style: italic; margin-top: 2px;">* Note: ${item.notes}</div>` : ''}
+                    ${item.notes ? `<div style="font-size: 11.5px; font-weight: bold; margin-top: 2px;">* NOTE: ${item.notes}</div>` : ''}
                   </td>
                   <td class="qty">${item.quantity}</td>
                 </tr>
