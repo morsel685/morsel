@@ -46,7 +46,8 @@ const printKOTReceipt = (order, kotItems, tableNo = null) => {
   });
 
   const orderNumber = order?.orderNumber || order?._id?.slice(-8).toUpperCase();
-  const orderType = tableNo ? `Dine In: Table ${tableNo}` : (order.orderType || "Dine In");
+  const finalTableNo = tableNo || order?.table?.tableNo || order?.table?.tableNumber || order?.table?.name || null;
+  const isTakeAway = order?.orderType === "Take Away" || (!finalTableNo && order?.orderType !== "Dine In");
 
   const kotContent = `
     <html>
@@ -85,8 +86,26 @@ const printKOTReceipt = (order, kotItems, tableNo = null) => {
             box-sizing: border-box;
             overflow-x: hidden;
           }
-          .header { text-align: center; margin-bottom: 5px; }
+          .header { text-align: center; margin-bottom: 3px; }
           .title { font-size: 15px; font-weight: bold; border: 2px solid #000; padding: 4px; margin-bottom: 4px; }
+          .target-box {
+            border: 2px solid #000;
+            padding: 4px 2px;
+            margin: 4px 0 3px 0;
+            text-align: center;
+          }
+          .target-table {
+            font-size: 20px;
+            font-weight: 900;
+            line-height: 1.2;
+            letter-spacing: 0.5px;
+          }
+          .target-type {
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 2px;
+            letter-spacing: 1px;
+          }
           .divider { border-top: 2px dashed #000; margin: 4px 0; }
           .info-row { display: flex; justify-content: space-between; font-size: 11.5px; margin: 2px 0; font-weight: bold; }
           .items-table { width: 100%; table-layout: fixed; border-collapse: collapse; margin: 5px 0; font-size: 12px; font-weight: bold; }
@@ -102,13 +121,18 @@ const printKOTReceipt = (order, kotItems, tableNo = null) => {
         <div class="receipt-container">
           <div class="header">
             <div class="title">KITCHEN ORDER TICKET</div>
+            <div class="target-box">
+              ${finalTableNo 
+                ? `<div class="target-table">TABLE: ${finalTableNo}</div>
+                   <div class="target-type">DINE IN</div>`
+                : `<div class="target-table">*** TAKE AWAY ***</div>`
+              }
+            </div>
           </div>
+          <div class="divider"></div>
           <div class="info-row">
-            <span>Date: ${formattedDate} ${formattedTime}</span>
-          </div>
-          <div class="info-row">
-            <span>KOT No: ${orderNumber}</span>
-            <span>${orderType}</span>
+            <span>KOT: ${orderNumber}</span>
+            <span>${formattedDate} ${formattedTime}</span>
           </div>
           <div class="divider"></div>
           <table class="items-table">
