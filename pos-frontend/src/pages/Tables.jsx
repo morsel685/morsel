@@ -82,12 +82,17 @@ const Tables = () => {
     }
   };
 
-  // Filter tables based on status
-  const filteredTables = resData?.data?.data?.filter((table) => {
-    if (status === "all") return true;
-    if (status === "booked") return table.status === "Booked";
-    return true;
-  }) || [];
+  // Filter and sort tables naturally (e.g. A1, A2, A3... B1, B2... Out 1, Out 2)
+  const filteredTables = (resData?.data?.data || [])
+    .filter((table) => {
+      if (status === "all") return true;
+      if (status === "booked") return table.status === "Booked";
+      return true;
+    })
+    .sort((a, b) => (a.tableNo || "").localeCompare(b.tableNo || "", undefined, {
+      numeric: true,
+      sensitivity: "base"
+    }));
 
   return (
     <section className="bg-[#1f1f1f] h-[calc(100vh-5rem)] overflow-hidden flex flex-col pb-16 sm:pb-0">

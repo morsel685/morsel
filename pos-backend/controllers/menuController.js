@@ -7,11 +7,11 @@ const createHttpError = require('http-errors');
 // Get all categories with their items
 const getMenu = async (req, res, next) => {
     try {
-        const categories = await Category.find().lean();
+        const categories = await Category.find().sort({ createdAt: 1 }).lean();
 
-        // Fetch items for each category
+        // Fetch items for each category with stable sort
         const menuData = await Promise.all(categories.map(async (category) => {
-            const items = await Item.find({ category: category._id });
+            const items = await Item.find({ category: category._id }).sort({ createdAt: 1, name: 1 });
             return {
                 ...category,
                 id: category._id, // Add id field for frontend compatibility

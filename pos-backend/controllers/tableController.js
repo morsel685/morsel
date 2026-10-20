@@ -32,6 +32,13 @@ const getTables = async (req, res, next) => {
       path: "currentOrder",
       select: "customerDetails items bills orderStatus paymentMethod"
     });
+
+    // Natural alphanumeric sorting (A1, A2, A3... B1, B2... Out 1, Out 2)
+    tables.sort((a, b) => (a.tableNo || "").localeCompare(b.tableNo || "", undefined, {
+      numeric: true,
+      sensitivity: "base"
+    }));
+
     res.status(200).json({ success: true, data: tables });
   } catch (error) {
     next(error);

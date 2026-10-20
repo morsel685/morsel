@@ -294,30 +294,35 @@ const TableCard = ({ id, name, status, initials, seats, currentOrder, onUpdate, 
 
   return (
     <div onClick={() => handleClick(name)} key={id} className="w-full hover:bg-[#2c2c2c] bg-[#262626] p-4 rounded-lg cursor-pointer relative group">
-      {/* Edit/Delete buttons */}
-      {status !== "Booked" && onEdit && onDelete && (
-        <div className="absolute top-3 right-3 flex gap-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button
-            onClick={(e) => { e.stopPropagation(); onEdit(); }}
-            className="p-2 bg-blue-600 rounded-lg text-white hover:bg-blue-500 shadow-lg"
-            title="Edit Table"
-          >
-            <FaEdit size={12} />
-          </button>
-          <button
-            onClick={(e) => { e.stopPropagation(); onDelete(); }}
-            className="p-2 bg-red-600 rounded-lg text-white hover:bg-red-500 shadow-lg"
-            title="Delete Table"
-          >
-            <FaTrash size={12} />
-          </button>
+      <div className="flex items-center justify-between gap-2 px-1">
+        <h1 className="text-[#f5f5f5] text-base sm:text-lg font-semibold truncate flex-1 min-w-0" title={`Table ${name}`}>
+          Table <FaLongArrowAltRight className="text-[#ababab] mx-1 inline flex-shrink-0" /> <span className="text-yellow-400 font-bold">{name}</span>
+        </h1>
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          {status !== "Booked" && onEdit && onDelete && (
+            <div className="hidden group-hover:flex items-center gap-1">
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onEdit(); }}
+                className="p-1.5 bg-blue-600 hover:bg-blue-500 rounded text-white transition active:scale-95 shadow"
+                title="Edit Table"
+              >
+                <FaEdit size={11} />
+              </button>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onDelete(); }}
+                className="p-1.5 bg-red-600 hover:bg-red-500 rounded text-white transition active:scale-95 shadow"
+                title="Delete Table"
+              >
+                <FaTrash size={11} />
+              </button>
+            </div>
+          )}
+          <p className={`${status === "Booked" ? "text-green-400 bg-[#1e3a2f]" : "bg-[#664a04] text-white"} px-2.5 py-1 rounded-lg text-xs font-semibold`}>
+            {status}
+          </p>
         </div>
-      )}
-      <div className="flex items-center justify-between px-1">
-        <h1 className="text-[#f5f5f5] text-xl font-semibold">Table <FaLongArrowAltRight className="text-[#ababab] ml-2 inline" /> {name}</h1>
-        <p className={`${status === "Booked" ? "text-green-600 bg-[#2e4a40]" : "bg-[#664a04] text-white"} px-2 py-1 rounded-lg text-sm`}>
-          {status}
-        </p>
       </div>
       <div className="flex items-center justify-center mt-5 mb-4">
         <h1 className={`text-white rounded-full p-5 text-xl`} style={{ backgroundColor: initials ? getBgColor() : "#1f1f1f" }} >{getAvatarName(initials) || "N/A"}</h1>
