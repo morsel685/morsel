@@ -82,17 +82,39 @@ const Tables = () => {
     }
   };
 
-  // Filter and sort tables naturally (e.g. A1, A2, A3... B1, B2... Out 1, Out 2)
+  const getTableGroup = (name = "") => {
+    const n = (name || "").trim().toLowerCase();
+    if (/^a\s*\d+/i.test(n)) return 1; // A series
+    if (/^b\s*\d+/i.test(n) && !n.startsWith("back")) return 2; // B series
+    if (n.includes("back")) return 4; // Back series
+    if (n.includes("out")) return 3; // Out series
+    return 5;
+  };
+
+  const getTableNumber = (name = "") => {
+    const match = (name || "").match(/\d+/);
+    return match ? parseInt(match[0], 10) : 0;
+  };
+
+  // Filter and sort tables: A series -> B series -> Out series -> Back series in order
   const filteredTables = (resData?.data?.data || [])
     .filter((table) => {
       if (status === "all") return true;
       if (status === "booked") return table.status === "Booked";
       return true;
     })
-    .sort((a, b) => (a.tableNo || "").localeCompare(b.tableNo || "", undefined, {
-      numeric: true,
-      sensitivity: "base"
-    }));
+    .sort((a, b) => {
+      const gA = getTableGroup(a.tableNo);
+      const gB = getTableGroup(b.tableNo);
+      if (gA !== gB) return gA - gB;
+      const nA = getTableNumber(a.tableNo);
+      const nB = getTableNumber(b.tableNo);
+      if (nA !== nB) return nA - nB;
+      return (a.tableNo || "").localeCompare(b.tableNo || "", undefined, {
+        numeric: true,
+        sensitivity: "base"
+      });
+    });
 
   return (
     <section className="bg-[#1f1f1f] h-[calc(100vh-5rem)] overflow-hidden flex flex-col pb-16 sm:pb-0">

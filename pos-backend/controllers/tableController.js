@@ -26,6 +26,20 @@ const addTable = async (req, res, next) => {
   }
 };
 
+const getTableGroup = (name = "") => {
+  const n = (name || "").trim().toLowerCase();
+  if (/^a\s*\d+/i.test(n)) return 1; // A series
+  if (/^b\s*\d+/i.test(n) && !n.startsWith("back")) return 2; // B series
+  if (n.includes("back")) return 4; // Back series
+  if (n.includes("out")) return 3; // Out series
+  return 5;
+};
+
+const getTableNumber = (name = "") => {
+  const match = (name || "").match(/\d+/);
+  return match ? parseInt(match[0], 10) : 0;
+};
+
 const getTables = async (req, res, next) => {
   try {
     const tables = await Table.find().populate({
@@ -33,11 +47,19 @@ const getTables = async (req, res, next) => {
       select: "customerDetails items bills orderStatus paymentMethod"
     });
 
-    // Natural alphanumeric sorting (A1, A2, A3... B1, B2... Out 1, Out 2)
-    tables.sort((a, b) => (a.tableNo || "").localeCompare(b.tableNo || "", undefined, {
-      numeric: true,
-      sensitivity: "base"
-    }));
+    // Sort order: A series -> B series -> Out series -> Back series in order
+    tables.sort((a, b) => {
+      const gA = getTableGroup(a.tableNo);
+      const gB = getTableGroup(b.tableNo);
+      if (gA !== gB) return gA - gB;
+      const nA = getTableNumber(a.tableNo);
+      const nB = getTableNumber(b.tableNo);
+      if (nA !== nB) return nA - nB;
+      return (a.tableNo || "").localeCompare(b.tableNo || "", undefined, {
+        numeric: true,
+        sensitivity: "base"
+      });
+    });
 
     res.status(200).json({ success: true, data: tables });
   } catch (error) {
