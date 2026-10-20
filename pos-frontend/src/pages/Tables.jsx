@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import BottomNav from "../components/shared/BottomNav";
 import BackButton from "../components/shared/BackButton";
 import TableCard from "../components/tables/TableCard";
@@ -9,6 +10,9 @@ import { getTables, addTable, editTableDetails, deleteTable } from "../https";
 import { enqueueSnackbar } from "notistack";
 
 const Tables = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isAdminMode = location.state?.isAdminMode || false;
   const [status, setStatus] = useState("all");
   const queryClient = useQueryClient();
 
@@ -119,11 +123,25 @@ const Tables = () => {
   return (
     <section className="bg-[#1f1f1f] h-[calc(100vh-5rem)] overflow-hidden flex flex-col pb-16 sm:pb-0">
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between px-4 sm:px-10 py-4 gap-4 flex-shrink-0">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
           <BackButton />
           <h1 className="text-[#f5f5f5] text-2xl font-bold tracking-wider">
             Tables
           </h1>
+          {isAdminMode && (
+            <div className="flex items-center gap-2">
+              <span className="bg-yellow-500/20 text-yellow-400 border border-yellow-500/40 px-2.5 py-0.5 rounded-full text-xs font-semibold">
+                Admin Mode
+              </span>
+              <button
+                type="button"
+                onClick={() => navigate("/dashboard")}
+                className="text-xs text-gray-400 hover:text-white underline cursor-pointer"
+              >
+                Back to Dashboard
+              </button>
+            </div>
+          )}
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:gap-4 w-full md:w-auto">
           <button
@@ -138,15 +156,17 @@ const Tables = () => {
           >
             Booked
           </button>
-          <button
-            onClick={() => {
-              setTableForm({ tableNo: "", seats: "" });
-              setIsAddOpen(true);
-            }}
-            className="bg-yellow-500 text-black px-3 sm:px-5 py-2 rounded-lg flex items-center justify-center gap-2 font-bold hover:bg-yellow-400 transition text-xs sm:text-sm ml-auto sm:ml-0 flex-1 sm:flex-initial"
-          >
-            <FaPlus /> Add Table
-          </button>
+          {isAdminMode && (
+            <button
+              onClick={() => {
+                setTableForm({ tableNo: "", seats: "" });
+                setIsAddOpen(true);
+              }}
+              className="bg-yellow-500 text-black px-3 sm:px-5 py-2 rounded-lg flex items-center justify-center gap-2 font-bold hover:bg-yellow-400 transition text-xs sm:text-sm ml-auto sm:ml-0 flex-1 sm:flex-initial"
+            >
+              <FaPlus /> Add Table
+            </button>
+          )}
         </div>
       </div>
 
@@ -165,8 +185,8 @@ const Tables = () => {
               seats={table.seats}
               currentOrder={table.currentOrder}
               onUpdate={handleTableUpdate}
-              onEdit={() => handleEditClick(table)}
-              onDelete={() => handleDeleteClick(table._id)}
+              onEdit={isAdminMode ? () => handleEditClick(table) : undefined}
+              onDelete={isAdminMode ? () => handleDeleteClick(table._id) : undefined}
             />
           );
         })}

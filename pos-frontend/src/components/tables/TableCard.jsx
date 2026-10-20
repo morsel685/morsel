@@ -302,7 +302,7 @@ const TableCard = ({ id, name, status, initials, seats, currentOrder, onUpdate, 
     <div onClick={() => handleClick(name)} key={id} className="w-full hover:bg-[#2c2c2c] bg-[#262626] p-4 rounded-lg cursor-pointer relative group" title={`Table ${name}`}>
       <div className="flex items-center justify-end gap-1.5 px-1 min-h-[28px]">
         {status !== "Booked" && onEdit && onDelete && (
-          <div className="hidden group-hover:flex items-center gap-1">
+          <div className="flex items-center gap-1">
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); onEdit(); }}

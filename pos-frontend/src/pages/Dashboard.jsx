@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { MdCategory } from "react-icons/md";
+import { MdCategory, MdTableRestaurant } from "react-icons/md";
 import { BiSolidDish } from "react-icons/bi";
 import { HiDocumentReport } from "react-icons/hi";
 import Metrics from "../components/dashboard/Metrics";
@@ -10,6 +10,7 @@ import PaymentHistory from "../components/dashboard/PaymentHistory";
 const buttons = [
   { label: "Add Category", icon: <MdCategory />, action: "category" },
   { label: "Add Dishes", icon: <BiSolidDish />, action: "dishes" },
+  { label: "Edit Tables", icon: <MdTableRestaurant />, action: "tables" },
 ];
 
 const tabs = ["Metrics", "Orders", "Payments"];
@@ -28,6 +29,8 @@ const Dashboard = () => {
   const handleOpenModal = (action) => {
     if (action === "category" || action === "dishes") {
       navigate('/menu', { state: { isAdminMode: true } });
+    } else if (action === "tables") {
+      navigate('/tables', { state: { isAdminMode: true } });
     }
   };
 
