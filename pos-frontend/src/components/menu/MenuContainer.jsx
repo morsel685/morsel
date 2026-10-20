@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { GrRadialSelected } from "react-icons/gr";
-import { FaShoppingCart, FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+import { FaShoppingCart, FaPlus, FaEdit, FaTrash, FaSearch, FaTimes } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { addItems } from "../../redux/slices/cartSlice";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -19,6 +19,9 @@ const MenuContainer = ({ isAdminMode }) => {
   const [itemCounts, setItemCounts] = useState({}); // Per-item quantity map: { [itemId]: count }
   const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
   const [isAddItemOpen, setIsAddItemOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [highlightedItemId, setHighlightedItemId] = useState(null);
 
   // Modal Form States
   const [categoryForm, setCategoryForm] = useState({ name: "", bgColor: "#1a1a1a", icon: "🍽️" });
@@ -53,6 +56,69 @@ const MenuContainer = ({ isAdminMode }) => {
       if (updated) setSelectedCategory(updated);
     }
   }, [menuData, selectedCategory]);
+
+  // Search & Suggestions
+  const searchInputRef = useRef(null);
+  const searchDropdownRef = useRef(null);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (searchDropdownRef.current && !searchDropdownRef.current.contains(e.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const searchResults = useMemo(() => {
+    if (!searchQuery.trim() || !menuData) return [];
+    const q = searchQuery.trim().toLowerCase();
+    const results = [];
+    menuData.forEach((cat) => {
+      (cat.items || []).forEach((item) => {
+        if (item.name.toLowerCase().includes(q)) {
+          results.push({
+            ...item,
+            _categoryName: cat.name,
+            _categoryIcon: cat.icon,
+            _categoryId: cat.id
+          });
+        }
+      });
+    });
+    return results;
+  }, [searchQuery, menuData]);
+
+  const handleSelectSuggestedItem = (item) => {
+    // 1. Find the category this item belongs to and switch to it
+    const targetCat = menuData.find(c => c.id === item._categoryId || c.id === item.category || c.items?.some(i => i.id === item.id));
+    if (targetCat) {
+      setSelectedCategory(targetCat);
+      setItemCounts({});
+    }
+
+    // 2. Clear query and close dropdown
+    setSearchQuery("");
+    setIsDropdownOpen(false);
+
+    // 3. Highlight the item
+    setHighlightedItemId(item.id);
+
+    // 4. Scroll smoothly to the item on the page
+    setTimeout(() => {
+      const el = document.getElementById(`menu-item-${item.id}`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, 200);
+
+    // 5. Remove highlight after 2.5 seconds
+    setTimeout(() => {
+      setHighlightedItemId(null);
+    }, 2500);
+  };
 
   // Mutations
   const createCategoryMutation = useMutation({
@@ -206,17 +272,96 @@ const MenuContainer = ({ isAdminMode }) => {
 
         {/* Sticky Categories Bar */}
         <div className="sticky top-0 bg-[#1f1f1f] z-20 pb-3 pt-2 px-2 sm:px-6 border-b border-[#2a2a2a]/80 shadow-md">
-          {/* Header with Add Category */}
-          <div className="flex justify-between items-center pb-2">
-            <h2 className="text-gray-400 font-semibold text-sm sm:text-base">Menu Categories</h2>
-            {isAdminMode && (
-              <button
-                onClick={() => setIsAddCategoryOpen(true)}
-                className="bg-yellow-500 text-black px-3 sm:px-4 py-1.5 sm:py-2 rounded-md flex items-center gap-2 font-bold hover:bg-yellow-400 transition text-xs sm:text-sm active:scale-95"
-              >
-                <FaPlus /> Add Category
-              </button>
-            )}
+          {/* Header with Search + Add Category */}
+          <div className="flex justify-between items-center gap-2 pb-2">
+            <h2 className="text-gray-400 font-semibold text-sm sm:text-base flex-shrink-0">Menu Categories</h2>
+            <div className="flex items-center gap-2">
+              {/* Search Bar with Suggestions Dropdown */}
+              {!isAdminMode && (
+                <div className="relative flex items-center" ref={searchDropdownRef}>
+                  <FaSearch className="absolute left-3 text-gray-500 text-xs pointer-events-none" />
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    placeholder="Search dishes..."
+                    value={searchQuery}
+                    onFocus={() => {
+                      if (searchQuery.trim()) setIsDropdownOpen(true);
+                    }}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setIsDropdownOpen(true);
+                    }}
+                    className="bg-[#2a2a2a] text-white text-xs sm:text-sm pl-8 pr-8 py-1.5 sm:py-2 rounded-lg outline-none border border-[#3a3a3a] focus:border-yellow-500/60 transition-all w-[150px] sm:w-[240px] md:w-[280px] placeholder-gray-500 shadow-inner"
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => {
+                        setSearchQuery("");
+                        setIsDropdownOpen(false);
+                        searchInputRef.current?.focus();
+                      }}
+                      className="absolute right-2 text-gray-400 hover:text-white transition"
+                    >
+                      <FaTimes size={12} />
+                    </button>
+                  )}
+
+                  {/* Dropdown Suggestions */}
+                  {isDropdownOpen && searchQuery.trim().length > 0 && (
+                    <div className="absolute top-full right-0 mt-2 w-[280px] sm:w-[340px] md:w-[380px] bg-[#222] border border-[#3a3a3a] rounded-xl shadow-2xl z-50 max-h-80 overflow-y-auto">
+                      {searchResults.length > 0 ? (
+                        <div className="py-2">
+                          <div className="px-3 py-1.5 text-[11px] font-semibold text-gray-400 uppercase tracking-wider border-b border-[#2e2e2e] flex justify-between items-center">
+                            <span>Suggestions</span>
+                            <span className="text-yellow-500 font-bold">{searchResults.length} found</span>
+                          </div>
+                          {searchResults.slice(0, 15).map((item) => (
+                            <div
+                              key={item.id}
+                              onClick={() => handleSelectSuggestedItem(item)}
+                              className="flex items-center justify-between px-3 py-2.5 hover:bg-[#2e2e2e] cursor-pointer transition border-b border-[#2a2a2a]/40 last:border-0 group"
+                            >
+                              <div className="min-w-0 flex-1 pr-3">
+                                <h4 className="text-white text-xs sm:text-sm font-semibold truncate group-hover:text-yellow-400 transition-colors">
+                                  {item.name}
+                                </h4>
+                                <p className="text-[11px] text-gray-400 truncate">
+                                  {item._categoryName}
+                                </p>
+                              </div>
+                              <div className="text-right flex-shrink-0 flex items-center gap-2">
+                                <span className="text-yellow-400 font-bold text-xs sm:text-sm">₹{item.price}</span>
+                                <span className="text-[10px] text-gray-400 group-hover:text-white bg-[#1a1a1a] px-2 py-1 rounded transition font-semibold">
+                                  Go →
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                          {searchResults.length > 15 && (
+                            <div className="px-3 py-1.5 text-center text-[11px] text-gray-500 bg-[#1a1a1a]">
+                              Showing first 15 of {searchResults.length} matches
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="p-4 text-center text-gray-400 text-xs">
+                          <p>No dishes matching "{searchQuery}"</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+              {isAdminMode && (
+                <button
+                  onClick={() => setIsAddCategoryOpen(true)}
+                  className="bg-yellow-500 text-black px-3 sm:px-4 py-1.5 sm:py-2 rounded-md flex items-center gap-2 font-bold hover:bg-yellow-400 transition text-xs sm:text-sm active:scale-95"
+                >
+                  <FaPlus /> Add Category
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Horizontal Category Pills */}
@@ -288,7 +433,7 @@ const MenuContainer = ({ isAdminMode }) => {
             )}
           </div>
 
-          {/* Items Grid - Responsive auto-fill across small, medium, large, and extra large screens */}
+          {/* Items Grid */}
           <div
             className="w-full"
             style={{
@@ -300,7 +445,12 @@ const MenuContainer = ({ isAdminMode }) => {
             {selectedCategory?.items?.map((item) => (
               <div
                 key={item.id}
-                className="flex flex-col bg-gradient-to-br from-[#252525] to-[#1a1a1a] rounded-2xl p-4 sm:p-5 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 relative group border border-[#333] hover:border-yellow-500/60"
+                id={`menu-item-${item.id}`}
+                className={`flex flex-col bg-gradient-to-br from-[#252525] to-[#1a1a1a] rounded-2xl p-4 sm:p-5 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 relative group border ${
+                  highlightedItemId === item.id
+                    ? "border-yellow-400 ring-4 ring-yellow-400/40 scale-[1.03] shadow-yellow-500/20 shadow-2xl"
+                    : "border-[#333] hover:border-yellow-500/60"
+                }`}
               >
                 {/* Admin Edit/Delete Buttons */}
                 {isAdminMode && (
@@ -322,37 +472,16 @@ const MenuContainer = ({ isAdminMode }) => {
                   </div>
                 )}
 
-                {/* Item Icon/Emoji Placeholder or Image */}
-                <div className="w-full h-32 bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 rounded-xl flex items-center justify-center mb-4 border border-yellow-500/20 overflow-hidden">
-                  {item.image ? (
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-full h-full object-cover rounded-xl"
-                      onError={(e) => {
-                        e.target.style.display = "none";
-                        if (e.target.nextSibling) e.target.nextSibling.style.display = "block";
-                      }}
-                    />
-                  ) : null}
-                  <span
-                    className="text-6xl opacity-80"
-                    style={{ display: item.image ? "none" : "block" }}
-                  >
-                    {selectedCategory?.icon || "🍽️"}
-                  </span>
-                </div>
+                  {/* Item Name */}
+                  <h3 className={`text-white font-bold text-base sm:text-lg mb-1.5 leading-snug ${isAdminMode ? "pr-16" : ""}`} title={item.name}>
+                    {item.name}
+                  </h3>
 
-                {/* Item Name */}
-                <h3 className="text-white font-bold text-base sm:text-lg mb-1 truncate" title={item.name}>
-                  {item.name}
-                </h3>
-
-                {/* Price */}
-                <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-yellow-500 font-bold text-xl sm:text-2xl">₹{item.price}</span>
-                  <span className="text-gray-500 text-xs sm:text-sm">per item</span>
-                </div>
+                  {/* Price */}
+                  <div className="flex items-baseline gap-2 mb-3">
+                    <span className="text-yellow-500 font-bold text-xl sm:text-2xl">₹{item.price}</span>
+                    <span className="text-gray-500 text-xs sm:text-sm">per item</span>
+                  </div>
 
                 {/* Quantity Selector & Add to Cart */}
                 {!isAdminMode && (
