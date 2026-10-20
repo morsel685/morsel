@@ -12,12 +12,15 @@ import { useNavigate } from "react-router-dom";
 const getKotDifference = (newItems, oldItems) => {
   const diff = [];
   newItems.forEach(newItem => {
-    const oldItem = oldItems.find(item => item.name === newItem.name);
+    const newNote = (newItem.notes || '').trim().toLowerCase();
+    const oldItem = oldItems.find(item => 
+      item.name === newItem.name && (item.notes || '').trim().toLowerCase() === newNote
+    );
     if (!oldItem) {
-      // Completely new item
+      // Completely new item or new note instruction
       diff.push({ ...newItem });
     } else if (newItem.quantity > oldItem.quantity) {
-      // Quantity increased
+      // Quantity increased for this note
       diff.push({
         ...newItem,
         quantity: newItem.quantity - oldItem.quantity

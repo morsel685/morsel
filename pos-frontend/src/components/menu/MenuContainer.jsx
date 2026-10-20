@@ -138,11 +138,13 @@ const MenuContainer = ({ isAdminMode }) => {
 
     const { name, price } = item;
     const newObj = {
+      menuItemId: item.id || item._id,
       id: item.id || item._id || new Date().toISOString(),
       name,
       pricePerQuantity: Number(price),
       quantity: Number(count),
-      price: Number(price) * Number(count)
+      price: Number(price) * Number(count),
+      notes: ""
     };
 
     dispatch(addItems(newObj));

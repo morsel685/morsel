@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { FaNotesMedical } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
-import { removeItem, incrementQuantity, decrementQuantity, updateItemNote } from "../../redux/slices/cartSlice";
+import { removeItem, incrementQuantity, decrementQuantity, updateItemNote, splitItemWithNote } from "../../redux/slices/cartSlice";
 import Modal from "../shared/Modal";
 
 const QUICK_NOTES = [
@@ -21,6 +21,8 @@ const CartInfo = () => {
 
   const [noteModalItem, setNoteModalItem] = useState(null);
   const [noteText, setNoteText] = useState("");
+  const [applyMode, setApplyMode] = useState("all"); // "all" or "split"
+  const [splitQty, setSplitQty] = useState(1);
 
   useEffect(() => {
     if (scrolLRef.current) {
@@ -46,18 +48,32 @@ const CartInfo = () => {
   const handleOpenNoteModal = (item) => {
     setNoteModalItem(item);
     setNoteText(item.notes || "");
+    setApplyMode("all");
+    setSplitQty(1);
   };
 
   const handleSaveNote = () => {
-    if (noteModalItem) {
-      dispatch(updateItemNote({ id: noteModalItem.id || noteModalItem._id, notes: noteText }));
+    if (!noteModalItem) return;
+    const targetId = noteModalItem.cartItemId || noteModalItem.id || noteModalItem._id;
+    if (applyMode === "split" && noteModalItem.quantity > 1 && splitQty >= 1) {
+      dispatch(splitItemWithNote({
+        id: targetId,
+        splitQuantity: splitQty,
+        notes: noteText
+      }));
+    } else {
+      dispatch(updateItemNote({
+        id: targetId,
+        notes: noteText
+      }));
     }
     setNoteModalItem(null);
   };
 
   const handleClearNote = () => {
     if (noteModalItem) {
-      dispatch(updateItemNote({ id: noteModalItem.id || noteModalItem._id, notes: "" }));
+      const targetId = noteModalItem.cartItemId || noteModalItem.id || noteModalItem._id;
+      dispatch(updateItemNote({ id: targetId, notes: "" }));
     }
     setNoteModalItem(null);
   };
@@ -86,7 +102,7 @@ const CartInfo = () => {
         ) : (
           cartData.map((item) => (
             <div
-              key={item.id || item._id}
+              key={item.cartItemId || item.id || item._id}
               className="bg-[#1f1f1f] rounded-lg px-3.5 py-2.5 mb-2 border border-[#2a2a2a] hover:border-[#333] transition"
             >
               {/* Item Name & Total Price */}
@@ -114,7 +130,7 @@ const CartInfo = () => {
               <div className="flex items-center justify-between mt-2.5">
                 <div className="flex items-center gap-3">
                   <RiDeleteBin2Fill
-                    onClick={() => handleRemove(item.id || item._id)}
+                    onClick={() => handleRemove(item.cartItemId || item.id || item._id)}
                     className="text-[#ababab] hover:text-red-500 cursor-pointer transition active:scale-90"
                     size={17}
                     title="Remove item"
@@ -131,7 +147,7 @@ const CartInfo = () => {
                 <div className="flex items-center bg-[#141414] rounded-lg border border-[#333] overflow-hidden">
                   <button
                     type="button"
-                    onClick={() => handleDecrement(item.id || item._id)}
+                    onClick={() => handleDecrement(item.cartItemId || item.id || item._id)}
                     className="text-yellow-500 hover:bg-[#252525] px-2.5 py-0.5 font-bold text-sm transition active:scale-90 select-none"
                     title={item.quantity === 1 ? "Remove item" : "Decrease quantity"}
                   >
@@ -142,7 +158,7 @@ const CartInfo = () => {
                   </span>
                   <button
                     type="button"
-                    onClick={() => handleIncrement(item.id || item._id)}
+                    onClick={() => handleIncrement(item.cartItemId || item.id || item._id)}
                     className="text-yellow-500 hover:bg-[#252525] px-2.5 py-0.5 font-bold text-sm transition active:scale-90 select-none"
                     title="Increase quantity"
                   >
@@ -162,6 +178,62 @@ const CartInfo = () => {
         title={`Kitchen Note: ${noteModalItem?.name || "Item"}`}
       >
         <div className="flex flex-col gap-4">
+          {/* If quantity > 1, provide option to apply to all or split 1 separately */}
+          {noteModalItem?.quantity > 1 && (
+            <div className="bg-[#242424] p-3 rounded-lg border border-[#383838]">
+              <label className="text-xs text-gray-300 font-semibold block mb-2">Apply this note to:</label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setApplyMode("all")}
+                  className={`py-2 px-3 rounded-lg text-xs font-semibold border transition active:scale-95 ${
+                    applyMode === "all"
+                      ? "bg-yellow-500 text-black border-yellow-500 font-bold"
+                      : "bg-[#1c1c1c] text-gray-300 border-[#333] hover:border-yellow-500/50"
+                  }`}
+                >
+                  All ({noteModalItem.quantity}) Items
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setApplyMode("split")}
+                  className={`py-2 px-3 rounded-lg text-xs font-semibold border transition active:scale-95 ${
+                    applyMode === "split"
+                      ? "bg-yellow-500 text-black border-yellow-500 font-bold"
+                      : "bg-[#1c1c1c] text-gray-300 border-[#333] hover:border-yellow-500/50"
+                  }`}
+                >
+                  Separate ({splitQty}) Item
+                </button>
+              </div>
+
+              {applyMode === "split" && (
+                <div className="mt-3 pt-2.5 border-t border-[#383838] flex items-center justify-between text-xs text-gray-300">
+                  <span>Quantity to separate with this note:</span>
+                  <div className="flex items-center bg-[#181818] rounded-lg border border-[#3a3a3a] overflow-hidden">
+                    <button
+                      type="button"
+                      disabled={splitQty <= 1}
+                      onClick={() => setSplitQty((prev) => Math.max(1, prev - 1))}
+                      className="px-2.5 py-1 text-yellow-500 disabled:opacity-30 font-bold hover:bg-[#282828] transition select-none"
+                    >
+                      −
+                    </button>
+                    <span className="px-3 text-white font-bold text-sm min-w-[28px] text-center">{splitQty}</span>
+                    <button
+                      type="button"
+                      disabled={splitQty >= noteModalItem.quantity - 1}
+                      onClick={() => setSplitQty((prev) => Math.min(noteModalItem.quantity - 1, prev + 1))}
+                      className="px-2.5 py-1 text-yellow-500 disabled:opacity-30 font-bold hover:bg-[#282828] transition select-none"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           <div>
             <p className="text-xs text-gray-400 mb-2 font-medium">Quick Suggestions:</p>
             <div className="flex flex-wrap gap-2">
@@ -189,7 +261,7 @@ const CartInfo = () => {
             <textarea
               value={noteText}
               onChange={(e) => setNoteText(e.target.value)}
-              placeholder="e.g. Less spicy, make it extra crispy, no garlic..."
+              placeholder="e.g. Less spicy, parcel, make it crispy..."
               rows={3}
               className="w-full bg-[#222] text-white border border-[#333] rounded-lg p-3 text-sm focus:border-yellow-500 focus:outline-none resize-none placeholder-gray-500"
             />
@@ -220,7 +292,9 @@ const CartInfo = () => {
                 onClick={handleSaveNote}
                 className="px-5 py-2 text-xs font-bold text-black bg-yellow-500 hover:bg-yellow-400 rounded-lg shadow transition active:scale-95"
               >
-                Save Note
+                {applyMode === "split" && noteModalItem?.quantity > 1
+                  ? `Separate & Save (${splitQty})`
+                  : "Save Note"}
               </button>
             </div>
           </div>
