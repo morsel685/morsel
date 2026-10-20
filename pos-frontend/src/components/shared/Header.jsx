@@ -1,5 +1,4 @@
 import React from "react";
-import { FaSearch } from "react-icons/fa";
 import { FaUserCircle } from "react-icons/fa";
 import { FaBell } from "react-icons/fa";
 import logo from "../../assets/images/logo.png";
@@ -44,15 +43,6 @@ const Header = () => {
         <img src={logo} className="h-8 md:h-10" alt="Morsel logo" />
       </div>
 
-      {/* SEARCH */}
-      <div className="hidden md:flex items-center gap-4 bg-[#1f1f1f] rounded-[15px] px-5 py-2 w-[300px] lg:w-[500px]">
-        <FaSearch className="text-[#f5f5f5]" />
-        <input
-          type="text"
-          placeholder="Search"
-          className="bg-[#1f1f1f] outline-none text-[#f5f5f5] w-full"
-        />
-      </div>
 
       {/* LOGGED USER DETAILS */}
       <div className="flex items-center gap-2 md:gap-4">
