@@ -1,13 +1,19 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAvatarName, getBgColor } from "../../utils"
 import { useDispatch } from "react-redux";
 import { updateTable as updateTableRedux, setEditingOrder } from "../../redux/slices/customerSlice";
 import { setCart } from "../../redux/slices/cartSlice";
 import { updateTable, updateOrder } from "../../https/index";
-import { FaLongArrowAltRight, FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaTrash } from "react-icons/fa";
 import { enqueueSnackbar } from "notistack";
 import receiptLogo from "../../assets/images/receipt_logo.png";
+
+const getTableFontSize = (name = "") => {
+  const len = (name || "").length;
+  if (len <= 3) return "text-2xl sm:text-3xl";
+  if (len <= 6) return "text-lg sm:text-xl";
+  return "text-xs sm:text-sm";
+};
 
 const TableCard = ({ id, name, status, initials, seats, currentOrder, onUpdate, onEdit, onDelete }) => {
   const dispatch = useDispatch();
@@ -293,39 +299,38 @@ const TableCard = ({ id, name, status, initials, seats, currentOrder, onUpdate, 
   };
 
   return (
-    <div onClick={() => handleClick(name)} key={id} className="w-full hover:bg-[#2c2c2c] bg-[#262626] p-4 rounded-lg cursor-pointer relative group">
-      <div className="flex items-center justify-between gap-2 px-1">
-        <h1 className="text-[#f5f5f5] text-base sm:text-lg font-semibold truncate flex-1 min-w-0" title={`Table ${name}`}>
-          Table <FaLongArrowAltRight className="text-[#ababab] mx-1 inline flex-shrink-0" /> <span className="text-yellow-400 font-bold">{name}</span>
-        </h1>
-        <div className="flex items-center gap-1.5 flex-shrink-0">
-          {status !== "Booked" && onEdit && onDelete && (
-            <div className="hidden group-hover:flex items-center gap-1">
-              <button
-                type="button"
-                onClick={(e) => { e.stopPropagation(); onEdit(); }}
-                className="p-1.5 bg-blue-600 hover:bg-blue-500 rounded text-white transition active:scale-95 shadow"
-                title="Edit Table"
-              >
-                <FaEdit size={11} />
-              </button>
-              <button
-                type="button"
-                onClick={(e) => { e.stopPropagation(); onDelete(); }}
-                className="p-1.5 bg-red-600 hover:bg-red-500 rounded text-white transition active:scale-95 shadow"
-                title="Delete Table"
-              >
-                <FaTrash size={11} />
-              </button>
-            </div>
-          )}
-          <p className={`${status === "Booked" ? "text-green-400 bg-[#1e3a2f]" : "bg-[#664a04] text-white"} px-2.5 py-1 rounded-lg text-xs font-semibold`}>
-            {status}
-          </p>
-        </div>
+    <div onClick={() => handleClick(name)} key={id} className="w-full hover:bg-[#2c2c2c] bg-[#262626] p-4 rounded-lg cursor-pointer relative group" title={`Table ${name}`}>
+      <div className="flex items-center justify-end gap-1.5 px-1 min-h-[28px]">
+        {status !== "Booked" && onEdit && onDelete && (
+          <div className="hidden group-hover:flex items-center gap-1">
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onEdit(); }}
+              className="p-1.5 bg-blue-600 hover:bg-blue-500 rounded text-white transition active:scale-95 shadow"
+              title="Edit Table"
+            >
+              <FaEdit size={11} />
+            </button>
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onDelete(); }}
+              className="p-1.5 bg-red-600 hover:bg-red-500 rounded text-white transition active:scale-95 shadow"
+              title="Delete Table"
+            >
+              <FaTrash size={11} />
+            </button>
+          </div>
+        )}
+        <p className={`${status === "Booked" ? "text-green-400 bg-[#1e3a2f]" : "bg-[#664a04] text-white"} px-2.5 py-1 rounded-lg text-xs font-semibold`}>
+          {status}
+        </p>
       </div>
-      <div className="flex items-center justify-center mt-5 mb-4">
-        <h1 className={`text-white rounded-full p-5 text-xl`} style={{ backgroundColor: initials ? getBgColor() : "#1f1f1f" }} >{getAvatarName(initials) || "N/A"}</h1>
+      <div className="flex items-center justify-center my-4">
+        <div className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#1f1f1f] border-2 ${status === "Booked" ? "border-green-500/50" : "border-[#3a3a3a] group-hover:border-yellow-500/50"} flex items-center justify-center p-2 text-center shadow-inner transition-colors`}>
+          <span className={`${getTableFontSize(name)} font-bold text-yellow-400 leading-tight select-none`}>
+            {name}
+          </span>
+        </div>
       </div>
       <p className="text-[#ababab] text-xs">Seats: <span className="text-[#f5f5f5]">{seats}</span></p>
 
