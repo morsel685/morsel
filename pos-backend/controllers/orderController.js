@@ -81,7 +81,7 @@ const getOrders = async (req, res, next) => {
 
 const updateOrder = async (req, res, next) => {
   try {
-    const { orderStatus, paymentMethod, items, bills, customerDetails } = req.body;
+    const { orderStatus, paymentMethod, items, bills, customerDetails, orderType } = req.body;
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -95,6 +95,7 @@ const updateOrder = async (req, res, next) => {
     if (items) updateData.items = items;
     if (bills) updateData.bills = bills;
     if (customerDetails) updateData.customerDetails = customerDetails;
+    if (orderType) updateData.orderType = orderType;
 
     const order = await Order.findByIdAndUpdate(
       id,

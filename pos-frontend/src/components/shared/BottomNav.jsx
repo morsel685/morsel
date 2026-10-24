@@ -6,7 +6,8 @@ import { BiSolidDish } from "react-icons/bi";
 import { useNavigate, useLocation } from "react-router-dom";
 import Modal from "./Modal";
 import { useDispatch } from "react-redux";
-import { setCustomer } from "../../redux/slices/customerSlice";
+import { setCustomer, clearEditingOrder } from "../../redux/slices/customerSlice";
+import { removeAllItems } from "../../redux/slices/cartSlice";
 
 const BottomNav = () => {
   const navigate = useNavigate();
@@ -32,7 +33,10 @@ const BottomNav = () => {
   const isActive = (path) => location.pathname === path;
 
   const handleCreateOrder = () => {
+    dispatch(clearEditingOrder());
+    dispatch(removeAllItems());
     dispatch(setCustomer({ name, phone, guests: guestCount }));
+    setIsModalOpen(false);
     navigate("/tables");
   }
 

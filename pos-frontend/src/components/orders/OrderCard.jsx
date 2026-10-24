@@ -6,8 +6,8 @@ import { updateOrderStatus, updateTable, updateOrder } from "../../https/index";
 import { enqueueSnackbar } from "notistack";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setEditingOrder } from "../../redux/slices/customerSlice";
-import { setCart } from "../../redux/slices/cartSlice";
+import { setEditingOrder, clearEditingOrder, removeCustomer } from "../../redux/slices/customerSlice";
+import { setCart, removeAllItems } from "../../redux/slices/cartSlice";
 import receiptLogo from "../../assets/images/receipt_logo.png";
 
 const OrderCard = ({ order, onUpdate }) => {
@@ -53,12 +53,17 @@ const OrderCard = ({ order, onUpdate }) => {
       }
 
       // If order is completed, mark the table as Available
-      if (newStatus === "Completed" && order.table?._id) {
-        await updateTable({
-          tableId: order.table._id,
-          status: "Available",
-          orderId: null
-        });
+      if (newStatus === "Completed") {
+        if (order.table?._id) {
+          await updateTable({
+            tableId: order.table._id,
+            status: "Available",
+            orderId: null
+          });
+        }
+        dispatch(clearEditingOrder());
+        dispatch(removeCustomer());
+        dispatch(removeAllItems());
       }
 
       enqueueSnackbar(`Order marked as ${newStatus}!`, { variant: "success" });

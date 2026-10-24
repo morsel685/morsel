@@ -1,20 +1,35 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { clearEditingOrder, setOrderType, updateTable as updateTableRedux, setCustomer } from "../redux/slices/customerSlice";
+import { removeAllItems } from "../redux/slices/cartSlice";
+import { MdTakeoutDining } from "react-icons/md";
 import BottomNav from "../components/shared/BottomNav";
 import BackButton from "../components/shared/BackButton";
 import TableCard from "../components/tables/TableCard";
+import TakeAwayCard from "../components/tables/TakeAwayCard";
 import Modal from "../components/shared/Modal";
-import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import { keepPreviousData, useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { getTables, addTable, editTableDetails, deleteTable } from "../https";
+import { getTables, getOrders, addTable, editTableDetails, deleteTable } from "../https";
 import { enqueueSnackbar } from "notistack";
 
 const Tables = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const isAdminMode = location.state?.isAdminMode || false;
   const [status, setStatus] = useState("all");
   const queryClient = useQueryClient();
+
+  const handleStartTakeAway = () => {
+    dispatch(clearEditingOrder());
+    dispatch(removeAllItems());
+    dispatch(setOrderType("Take Away"));
+    dispatch(updateTableRedux({ table: null }));
+    dispatch(setCustomer({ name: "Take Away Customer", phone: "", guests: 1 }));
+    navigate("/menu");
+  };
 
   // Modal states
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -22,10 +37,10 @@ const Tables = () => {
   const [tableForm, setTableForm] = useState({ tableNo: "", seats: "" });
 
   useEffect(() => {
-    document.title = "Morsel | Tables"
-  }, [])
+    document.title = "Morsel | Tables";
+  }, []);
 
-  const { data: resData, isError } = useQuery({
+  const { data: resData, isError: isTablesError } = useQuery({
     queryKey: ["tables"],
     queryFn: async () => {
       return await getTables();
@@ -33,15 +48,48 @@ const Tables = () => {
     placeholderData: keepPreviousData,
     refetchOnMount: 'always',
     staleTime: 0,
+    refetchInterval: 5000,
   });
 
-  if (isError) {
-    enqueueSnackbar("Something went wrong!", { variant: "error" })
+  const { data: ordersResData, isError: isOrdersError } = useQuery({
+    queryKey: ["orders"],
+    queryFn: async () => {
+      return await getOrders();
+    },
+    placeholderData: keepPreviousData,
+    refetchOnMount: 'always',
+    staleTime: 0,
+    refetchInterval: 5000,
+  });
+
+  if (isTablesError || isOrdersError) {
+    enqueueSnackbar("Something went wrong fetching data!", { variant: "error" });
   }
 
-  const handleTableUpdate = () => {
+  const handleDataUpdate = () => {
     queryClient.invalidateQueries(["tables"]);
+    queryClient.invalidateQueries(["orders"]);
   };
+
+  // Active Take Away orders (non-completed and non-cancelled)
+  const takeAwayOrders = useMemo(() => {
+    const orders = ordersResData?.data?.data || [];
+    return orders
+      .filter((order) => {
+        const st = (order.orderStatus || "").toLowerCase();
+        return (
+          order.orderType === "Take Away" &&
+          st !== "completed" &&
+          st !== "cancelled"
+        );
+      })
+      .sort((a, b) => new Date(b.createdAt || b.orderDate || 0) - new Date(a.createdAt || a.orderDate || 0));
+  }, [ordersResData]);
+
+  // Booked tables count
+  const bookedTablesCount = useMemo(() => {
+    return (resData?.data?.data || []).filter((t) => t.status === "Booked").length;
+  }, [resData]);
 
   // Mutations
   const addTableMutation = useMutation({
@@ -105,7 +153,7 @@ const Tables = () => {
     .filter((table) => {
       if (status === "all") return true;
       if (status === "booked") return table.status === "Booked";
-      return true;
+      return false; // If status is takeaway, we don't show tables
     })
     .sort((a, b) => {
       const gA = getTableGroup(a.tableNo);
@@ -143,18 +191,41 @@ const Tables = () => {
             </div>
           )}
         </div>
-        <div className="flex flex-wrap items-center gap-2 sm:gap-4 w-full md:w-auto">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full md:w-auto">
           <button
             onClick={() => setStatus("all")}
-            className={`text-[#ababab] text-sm sm:text-lg rounded-lg px-3 sm:px-5 py-1.5 sm:py-2 font-semibold ${status === "all" ? "bg-[#383838] text-white" : ""}`}
+            className={`text-sm sm:text-base rounded-lg px-3 sm:px-4 py-1.5 sm:py-2 font-semibold transition cursor-pointer ${
+              status === "all" ? "bg-[#383838] text-white shadow" : "text-[#ababab] hover:text-white"
+            }`}
           >
             All
           </button>
           <button
             onClick={() => setStatus("booked")}
-            className={`text-[#ababab] text-sm sm:text-lg rounded-lg px-3 sm:px-5 py-1.5 sm:py-2 font-semibold ${status === "booked" ? "bg-[#383838] text-white" : ""}`}
+            className={`text-sm sm:text-base rounded-lg px-3 sm:px-4 py-1.5 sm:py-2 font-semibold flex items-center gap-1.5 transition cursor-pointer ${
+              status === "booked" ? "bg-[#383838] text-white shadow" : "text-[#ababab] hover:text-white"
+            }`}
           >
-            Booked
+            <span>Booked</span>
+            {bookedTablesCount > 0 && (
+              <span className="bg-yellow-600/80 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">
+                {bookedTablesCount}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => setStatus("takeaway")}
+            className={`text-sm sm:text-base rounded-lg px-3 sm:px-4 py-1.5 sm:py-2 font-semibold flex items-center gap-1.5 transition cursor-pointer ${
+              status === "takeaway" ? "bg-[#383838] text-white border border-orange-500/50 shadow" : "text-[#ababab] hover:text-white"
+            }`}
+          >
+            <MdTakeoutDining className="text-lg text-orange-400" />
+            <span>Take Away</span>
+            {takeAwayOrders.length > 0 && (
+              <span className="bg-orange-600 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">
+                {takeAwayOrders.length}
+              </span>
+            )}
           </button>
           {isAdminMode && (
             <button
@@ -162,7 +233,7 @@ const Tables = () => {
                 setTableForm({ tableNo: "", seats: "" });
                 setIsAddOpen(true);
               }}
-              className="bg-yellow-500 text-black px-3 sm:px-5 py-2 rounded-lg flex items-center justify-center gap-2 font-bold hover:bg-yellow-400 transition text-xs sm:text-sm ml-auto sm:ml-0 flex-1 sm:flex-initial"
+              className="bg-yellow-500 text-black px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg flex items-center justify-center gap-1.5 font-bold hover:bg-yellow-400 transition text-xs sm:text-sm ml-auto sm:ml-0"
             >
               <FaPlus /> Add Table
             </button>
@@ -174,22 +245,81 @@ const Tables = () => {
         className="px-4 sm:px-16 py-4 flex-1 min-h-0 overflow-y-auto scrollbar-hide pb-24"
         style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '20px' }}
       >
-        {filteredTables.map((table) => {
-          return (
-            <TableCard
-              key={table._id}
-              id={table._id}
-              name={table.tableNo}
-              status={table.status}
-              initials={table?.currentOrder?.customerDetails?.name}
-              seats={table.seats}
-              currentOrder={table.currentOrder}
-              onUpdate={handleTableUpdate}
-              onEdit={isAdminMode ? () => handleEditClick(table) : undefined}
-              onDelete={isAdminMode ? () => handleDeleteClick(table._id) : undefined}
-            />
-          );
-        })}
+        {/* If Take Away tab selected: show + New Take Away card first, then all active takeaway orders */}
+        {status === "takeaway" && (
+          <>
+            <div
+              onClick={handleStartTakeAway}
+              className="w-full min-h-[300px] border-2 border-dashed border-orange-500/50 hover:border-orange-400 bg-[#262626]/40 hover:bg-[#262626] rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer transition text-center group"
+            >
+              <div className="w-16 h-16 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center text-3xl mb-3 group-hover:scale-110 transition">
+                <FaPlus />
+              </div>
+              <span className="text-white font-bold text-lg mb-1">New Take Away</span>
+              <span className="text-[#888] text-xs">Start a fresh parcel / takeaway order</span>
+            </div>
+            {takeAwayOrders.map((order) => (
+              <TakeAwayCard
+                key={order._id}
+                order={order}
+                onUpdate={handleDataUpdate}
+              />
+            ))}
+          </>
+        )}
+
+        {/* If All tab selected: show active Take Away orders at top, followed by all dining tables */}
+        {status === "all" && (
+          <>
+            {takeAwayOrders.map((order) => (
+              <TakeAwayCard
+                key={order._id}
+                order={order}
+                onUpdate={handleDataUpdate}
+              />
+            ))}
+            {filteredTables.map((table) => (
+              <TableCard
+                key={table._id}
+                id={table._id}
+                name={table.tableNo}
+                status={table.status}
+                initials={table?.currentOrder?.customerDetails?.name}
+                seats={table.seats}
+                currentOrder={table.currentOrder}
+                onUpdate={handleDataUpdate}
+                onEdit={isAdminMode ? () => handleEditClick(table) : undefined}
+                onDelete={isAdminMode ? () => handleDeleteClick(table._id) : undefined}
+              />
+            ))}
+          </>
+        )}
+
+        {/* If Booked tab selected: show only booked dining tables */}
+        {status === "booked" && (
+          <>
+            {filteredTables.length === 0 ? (
+              <div className="col-span-full text-center py-16 text-[#888] text-base">
+                No booked tables at the moment.
+              </div>
+            ) : (
+              filteredTables.map((table) => (
+                <TableCard
+                  key={table._id}
+                  id={table._id}
+                  name={table.tableNo}
+                  status={table.status}
+                  initials={table?.currentOrder?.customerDetails?.name}
+                  seats={table.seats}
+                  currentOrder={table.currentOrder}
+                  onUpdate={handleDataUpdate}
+                  onEdit={isAdminMode ? () => handleEditClick(table) : undefined}
+                  onDelete={isAdminMode ? () => handleDeleteClick(table._id) : undefined}
+                />
+              ))
+            )}
+          </>
+        )}
       </div>
 
       <BottomNav />

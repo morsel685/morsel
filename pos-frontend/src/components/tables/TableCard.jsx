@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { updateTable as updateTableRedux, setEditingOrder } from "../../redux/slices/customerSlice";
-import { setCart } from "../../redux/slices/cartSlice";
+import { updateTable as updateTableRedux, setEditingOrder, clearEditingOrder, removeCustomer } from "../../redux/slices/customerSlice";
+import { setCart, removeAllItems } from "../../redux/slices/cartSlice";
 import { updateTable, updateOrder } from "../../https/index";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { enqueueSnackbar } from "notistack";
@@ -26,8 +26,12 @@ const TableCard = ({ id, name, status, initials, seats, currentOrder, onUpdate, 
   const handleClick = (name) => {
     if (status === "Booked") return;
 
-    const table = { tableId: id, tableNo: name }
-    dispatch(updateTableRedux({ table }))
+    // Start fresh new order: clear any leftover cart items and editing state
+    dispatch(clearEditingOrder());
+    dispatch(removeAllItems());
+
+    const table = { tableId: id, tableNo: name };
+    dispatch(updateTableRedux({ table }));
     navigate(`/menu`);
   };
 
@@ -56,6 +60,9 @@ const TableCard = ({ id, name, status, initials, seats, currentOrder, onUpdate, 
         status: "Available",
         orderId: null
       });
+      dispatch(clearEditingOrder());
+      dispatch(removeCustomer());
+      dispatch(removeAllItems());
       enqueueSnackbar("Table marked as available!", { variant: "success" });
       if (onUpdate) onUpdate();
     } catch (error) {
@@ -86,6 +93,10 @@ const TableCard = ({ id, name, status, initials, seats, currentOrder, onUpdate, 
         status: "Available",
         orderId: null
       });
+
+      dispatch(clearEditingOrder());
+      dispatch(removeCustomer());
+      dispatch(removeAllItems());
 
       enqueueSnackbar("Order cancelled!", { variant: "success" });
       if (onUpdate) onUpdate();
@@ -119,6 +130,10 @@ const TableCard = ({ id, name, status, initials, seats, currentOrder, onUpdate, 
         status: "Available",
         orderId: null
       });
+
+      dispatch(clearEditingOrder());
+      dispatch(removeCustomer());
+      dispatch(removeAllItems());
 
       // Auto-print receipt after successful payment
       printReceiptWithPayment(selectedPayment);

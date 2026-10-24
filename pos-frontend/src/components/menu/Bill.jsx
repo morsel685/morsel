@@ -46,8 +46,8 @@ const printKOTReceipt = (order, kotItems, tableNo = null) => {
   });
 
   const orderNumber = order?.orderNumber || order?._id?.slice(-8).toUpperCase();
-  const finalTableNo = tableNo || order?.table?.tableNo || order?.table?.tableNumber || order?.table?.name || null;
-  const isTakeAway = order?.orderType === "Take Away" || (!finalTableNo && order?.orderType !== "Dine In");
+  const isTakeAway = order?.orderType === "Take Away" || (!tableNo && !order?.table);
+  const finalTableNo = isTakeAway ? null : (tableNo || order?.table?.tableNo || order?.table?.tableNumber || order?.table?.name || null);
 
   const kotContent = `
     <html>
@@ -122,10 +122,11 @@ const printKOTReceipt = (order, kotItems, tableNo = null) => {
           <div class="header">
             <div class="title">KITCHEN ORDER TICKET</div>
             <div class="target-box">
-              ${finalTableNo 
-                ? `<div class="target-table">TABLE: ${finalTableNo}</div>
+              ${isTakeAway
+                ? `<div class="target-table">*** TAKE AWAY ***</div>
+                   <div class="target-type">PARCEL / PACKING</div>`
+                : `<div class="target-table">TABLE: ${finalTableNo || "N/A"}</div>
                    <div class="target-type">DINE IN</div>`
-                : `<div class="target-table">*** TAKE AWAY ***</div>`
               }
             </div>
           </div>
@@ -251,7 +252,7 @@ const Bill = () => {
         const newKotItems = getKotDifference(cartData, originalItems);
 
         if (newKotItems.length > 0) {
-          printKOTReceipt(updatedOrder, newKotItems, customerData.table?.tableNo);
+          printKOTReceipt(updatedOrder, newKotItems, isTakeAway ? null : customerData.table?.tableNo);
         }
 
         enqueueSnackbar("Order Updated!", { variant: "success" });
@@ -308,14 +309,14 @@ const Bill = () => {
       setOrderInfo(data);
 
       // Trigger KOT print for the entire new order
-      printKOTReceipt(data, data.items, customerData.table?.tableNo);
+      printKOTReceipt(data, data.items, isTakeAway ? null : customerData.table?.tableNo);
 
       if (isTakeAway) {
-        // For Take Away, just show success and clear cart
+        // For Take Away, show success and navigate back to Tables
         enqueueSnackbar("Take Away Order Placed!", { variant: "success" });
         dispatch(removeCustomer());
         dispatch(removeAllItems());
-        navigate('/orders');
+        navigate('/tables');
       } else {
         // For Dine In, update table status
         const tableData = {

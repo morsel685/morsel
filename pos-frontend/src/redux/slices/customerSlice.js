@@ -25,6 +25,7 @@ const customerSlice = createSlice({
         },
 
         removeCustomer: (state) => {
+            state.orderId = "";
             state.customerName = "";
             state.customerPhone = "";
             state.guests = 0;
@@ -36,10 +37,16 @@ const customerSlice = createSlice({
 
         updateTable: (state, action) => {
             state.table = action.payload.table;
+            state.orderId = `${Date.now()}`;
+            state.editingOrderId = null;
+            state.originalItems = [];
         },
 
         setOrderType: (state, action) => {
             state.orderType = action.payload;
+            if (action.payload === "Take Away") {
+                state.table = null;
+            }
         },
 
         setEditingOrder: (state, action) => {

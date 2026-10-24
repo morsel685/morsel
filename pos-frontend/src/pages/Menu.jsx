@@ -6,12 +6,16 @@ import MenuContainer from "../components/menu/MenuContainer";
 import CustomerInfo from "../components/menu/CustomerInfo";
 import CartInfo from "../components/menu/CartInfo";
 import Bill from "../components/menu/Bill";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { clearEditingOrder, removeCustomer } from "../redux/slices/customerSlice";
+import { removeAllItems } from "../redux/slices/cartSlice";
 
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Menu = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const isAdminMode = location.state?.isAdminMode;
 
   useEffect(() => {
@@ -19,6 +23,15 @@ const Menu = () => {
   }, [isAdminMode]);
 
   const customerData = useSelector((state) => state.customer);
+
+  const handleBack = () => {
+    if (!isAdminMode) {
+      dispatch(clearEditingOrder());
+      dispatch(removeCustomer());
+      dispatch(removeAllItems());
+    }
+    navigate(-1);
+  };
 
   return (
     <section className="bg-[#1f1f1f] h-[calc(100vh-8.75rem)] min-h-[calc(100vh-8.75rem)] flex flex-col overflow-hidden">
@@ -28,7 +41,7 @@ const Menu = () => {
         <div className={`${isAdminMode ? "w-full" : "flex-1 min-w-0"} flex flex-col min-h-0 h-full`}>
           <div className="flex items-center justify-between px-2 sm:px-6 py-2.5 flex-shrink-0">
             <div className="flex items-center gap-3 sm:gap-4">
-              <BackButton />
+              <BackButton onClick={handleBack} />
               <h1 className="text-[#f5f5f5] text-xl sm:text-2xl font-bold tracking-wider">
                 {isAdminMode ? "Menu Management" : "Menu"}
               </h1>
@@ -43,7 +56,7 @@ const Menu = () => {
                       {customerData.customerName || "Customer Name"}
                     </h1>
                     <p className="text-[10px] sm:text-xs text-[#ababab] font-medium">
-                      Table : {customerData.table?.tableNo || "N/A"}
+                      {customerData.orderType === "Take Away" ? "Order Type: Take Away" : `Table : ${customerData.table?.tableNo || "N/A"}`}
                     </p>
                   </div>
                 </div>

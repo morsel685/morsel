@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { FaNotesMedical } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
-import { removeItem, incrementQuantity, decrementQuantity, updateItemNote, splitItemWithNote } from "../../redux/slices/cartSlice";
+import { removeItem, incrementQuantity, decrementQuantity, updateItemNote, splitItemWithNote, removeAllItems } from "../../redux/slices/cartSlice";
 import Modal from "../shared/Modal";
 
 const QUICK_NOTES = [
@@ -91,9 +91,21 @@ const CartInfo = () => {
 
   return (
     <div className="px-4 py-2 flex flex-col h-full min-h-0">
-      <h1 className="text-base sm:text-lg text-[#e4e4e4] font-semibold tracking-wide flex-shrink-0">
-        Order Details
-      </h1>
+      <div className="flex items-center justify-between flex-shrink-0">
+        <h1 className="text-base sm:text-lg text-[#e4e4e4] font-semibold tracking-wide">
+          Order Details
+        </h1>
+        {cartData.length > 0 && (
+          <button
+            type="button"
+            onClick={() => dispatch(removeAllItems())}
+            className="text-xs text-red-400 hover:text-red-300 font-semibold px-2 py-0.5 rounded hover:bg-red-500/10 transition active:scale-95 cursor-pointer"
+            title="Clear all items from cart"
+          >
+            Clear Cart
+          </button>
+        )}
+      </div>
       <div className="mt-2 overflow-y-auto flex-1 min-h-0 pr-1" ref={scrolLRef}>
         {cartData.length === 0 ? (
           <p className="text-[#ababab] text-sm flex justify-center items-center h-full min-h-[120px]">
